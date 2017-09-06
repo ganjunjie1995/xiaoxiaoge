@@ -1,0 +1,68 @@
+package com.alipay.Imazamox.service.serviceimpl;
+
+import com.alipay.Imazamox.domain.JingoImRecharge;
+import com.alipay.Imazamox.domain.JingoUser;
+import com.alipay.Imazamox.mapper.RechargeMapper;
+import com.alipay.Imazamox.service.RechargeService;
+import com.alipay.utils.*;
+import com.alipay.utils.DateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by zxj20 on 2017/8/17.
+ */
+@Service
+public class RechargeServiceimpl implements RechargeService{
+    @Autowired
+    private RechargeMapper rm;
+
+
+    @Override
+    public Map<String, Object> UpdateRechargeInfo(JingoImRecharge jic) {
+        Map<String,Object> map=new HashMap<>();
+        jic.setRecharge_code(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        jic.setRecharge_status((byte) 2);
+        int Num = 0;
+        try {
+            Num = rm.UpdateRechargeInfo(jic);
+        }catch(Exception e){
+            e.printStackTrace();
+            map.put("1","1");
+            map.put("msg","插入失败");
+            return map;
+        }
+        if (Num <=0){
+            map.put("2","2");
+            map.put("msg","插入失败");
+            return map;
+        }
+        map.put("msg","插入成功");
+        return map;
+    }
+
+    @Override
+    public void insertsaveRecharge(double amount, String RechargeCode, String subject) {
+        JingoUser currentUser = (JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        JingoImRecharge recharge =new JingoImRecharge();
+        recharge.setRecharge_code(RechargeCode);
+        recharge.getRecharge_subject(subject);
+        recharge.setRecharge_money(amount);
+        recharge.getRecharge_begin_time(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        recharge.setRecharge_status((byte) 1);
+        recharge.setUser_code("402882a35df334f4015df334f45b0000");
+        recharge.setRecharge_type((byte) 1);
+        int Num=0;
+        try {
+            Num=rm.insertRecharge(recharge);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        }
+
+
+}

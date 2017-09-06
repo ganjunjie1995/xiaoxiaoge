@@ -1,0 +1,49 @@
+package com.alipay.goldbean.mapper;
+
+import com.alipay.goldbean.domain.GBCashOrder;
+import com.alipay.goldbean.domain.GBRechargeOrder;
+import com.alipay.goldbean.domain.GoldBean;
+import com.alipay.login.mapper.BaseMapper;
+
+/**
+ * 对金豆的充值和提现会生成相应记录插入表，并且更新用户的余额和金豆数量
+ * Created by zhohongcheng on 2017/8/18.
+ */
+public interface GoldBeanMapper extends BaseMapper{
+
+    /*
+        金豆充值
+        1.金豆充值记录表增加记录       GBROrderMapper         addRechargeOrder(GBRechargeOrder gbro)
+        2.用户的金豆增加                                      addUserIm(Integer imNumber)
+        @Author zhouhongcheng
+        @Date 17/8/18
+     */
+
+    public void addGBRechargeOrder(GBRechargeOrder gbro);
+
+    public void rechargeGoldBean(GoldBean gb);
+
+
+    /*
+   金豆提现
+   1.金豆提现记录表增加记录
+   2.用户的余额增加，金豆减少      GBCOrderMapper        addWithdrawOrder(GBCashOrder gbwo)
+                                                       addUserMoney(Integer money)     subUserIm(Integer number)
+   @Author zhouhongcheng
+   @Date 17/8/18
+    */
+    public void addGBCashOrder(GBCashOrder gbco);
+
+    public void cashGoldBean(GoldBean gb);
+
+    /*
+        插入用户和金豆信息
+     */
+    public void insertGB(GoldBean gb);
+
+    /*
+        根据用户编号查询GoldBean对象
+     */
+    public GoldBean selectGBByUserCode(String userCode);
+
+}

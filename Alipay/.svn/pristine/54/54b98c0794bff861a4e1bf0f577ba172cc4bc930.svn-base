@@ -1,0 +1,102 @@
+package com.alipay.purse.domain;
+
+/**
+ * Created by zhongchunyan
+ * 提现实体类
+ * @Date 2017/8/19 13:06
+ */
+public class JingoCash {
+    private String cashCode;//UUID
+    private String userCode;//用户编码
+    private String cashAccount;//提现账号
+    private double cashMoney;//账户余额
+    private byte cashType;//提现类型 1提现到支付宝 2提现到银行卡 3提现至余额
+    private String cashDesc;//提现备注
+    private String cashBeginTime;//提现开始时间
+    private String cashEndTime;//提现结束时间
+    private String cashInfo;//提现信息
+    private byte cashStatus;//提现状态
+
+    public JingoCash() {
+    }
+
+    public String getCashCode() {
+        return cashCode;
+    }
+
+    public void setCashCode(String cashCode) {
+        this.cashCode = cashCode;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getCashAccount() {
+        return cashAccount;
+    }
+
+    public void setCashAccount(String cashAccount) {
+        this.cashAccount = cashAccount;
+    }
+
+    public double getCashMoney() {
+        return cashMoney;
+    }
+
+    public void setCashMoney(double cashMoney) {
+        this.cashMoney = cashMoney;
+    }
+
+    public byte getCashType() {
+        return cashType;
+    }
+
+    public void setCashType(byte cashType) {
+        this.cashType = cashType;
+    }
+
+    public String getCashDesc() {
+        return cashDesc;
+    }
+
+    public void setCashDesc(String cashDesc) {
+        this.cashDesc = cashDesc;
+    }
+
+    public String getCashBeginTime() {
+        return cashBeginTime;
+    }
+
+    public void setCashBeginTime(String cashBeginTime) {
+        this.cashBeginTime = cashBeginTime;
+    }
+
+    public String getCashEndTime() {
+        return cashEndTime;
+    }
+
+    public void setCashEndTime(String cashEndTime) {
+        this.cashEndTime = cashEndTime;
+    }
+
+    public String getCashInfo() {
+        return cashInfo;
+    }
+
+    public void setCashInfo(String cashInfo) {
+        this.cashInfo = cashInfo;
+    }
+
+    public byte getCashStatus() {
+        return cashStatus;
+    }
+
+    public void setCashStatus(byte cashStatus) {
+        this.cashStatus = cashStatus;
+    }
+}

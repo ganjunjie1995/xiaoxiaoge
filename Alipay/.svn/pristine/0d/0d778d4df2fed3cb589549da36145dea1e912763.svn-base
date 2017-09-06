@@ -1,0 +1,60 @@
+package com.alipay.goldbean.domain;
+
+import java.io.Serializable;
+
+/**
+ * Created by zhouhongcheng on 2017/8/19.
+ */
+public class GoldBean implements Serializable{
+
+    //用户编号
+    private String userCode;
+
+    //金豆数量
+    private Double gbNumber;
+
+    //金豆编号
+    private String gbCode;
+
+    public GoldBean() {
+    }
+
+    public GoldBean(String userCode, Double gbNumber, String gbCode) {
+        this.userCode = userCode;
+        this.gbNumber = gbNumber;
+        this.gbCode = gbCode;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public Double getGbNumber() {
+        return gbNumber;
+    }
+
+    public void setGbNumber(Double gbNumber) {
+        this.gbNumber = gbNumber;
+    }
+
+    public String getGbCode() {
+        return gbCode;
+    }
+
+    public void setGbCode(String gbCode) {
+        this.gbCode = gbCode;
+    }
+
+    @Override
+    public String toString() {
+        return "GoldBean{" +
+                "userCode='" + userCode + '\'' +
+                ", gbNumber=" + gbNumber +
+                ", gbCode='" + gbCode + '\'' +
+                '}';
+    }
+}

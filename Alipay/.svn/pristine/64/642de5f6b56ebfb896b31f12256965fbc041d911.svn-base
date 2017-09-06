@@ -1,0 +1,95 @@
+package com.alipay.purse.service;
+
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.entity.Pagination;
+import com.alipay.purse.domain.JingoCash;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.purse.domain.JingoTransfer;
+import com.alipay.purse.domain.*;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by zhongchunyan
+ * 钱袋子Service接口
+ * @Date 2017/8/17 15:32
+ */
+public interface PurseServiceI {
+    /**
+    * @Author: zhongchunyan
+    * @Description: 余额充值存储
+    * @Date: 2017/8/17
+    * @Params: amount,userCode
+    * @Return:
+    */
+   void saveRecharge(final double amount, final String rechargeCode, final String subject);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 更新充值信息
+   * @Date: 2017/8/18
+   * @Params: 
+   * @Return: 
+   */
+   Map<String, Object> updateRecharge(JingoRecharge recharge);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 余额提现存储
+   * @Date: 2017/8/19
+   * @Params:
+   * @Return:
+   */
+   Map<String, Object> saveCash(JingoCash cash);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 更新用户余额信息
+    * flag 1为充值更新 2为提现更新
+   * @Date: 2017/8/19
+   * @Params: 
+   * @Return: 
+   */
+   int updatePurse(JingoPurse purse, int flag);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 获取用户余额信息，为空list size为0
+   * @Date: 2017/8/19
+   * @Params: 
+   * @Return: 
+   */
+   List<JingoPurse> getPurse(String userCode, String userPhone);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 用户付款
+    * flag 1为转账账户第一次充值;2为更新
+   * @Date: 2017/8/21
+   * @Params:
+   * @Return: 
+   */
+   Map<String, Object> transferPurse(JingoPurse fromPurse, JingoPurse targetPurse,
+                                     JingoTransfer transfer, final int flag);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 更新用户收款信息
+   * @Date: 2017/8/22
+   * @Params:
+   * @Return:
+   */
+   Map<String, Object> updateMessage(JingoMessage msg);
+   /**
+   * @Author: zhongchunyan
+   * @Description: 删除选中数据
+   * @Date: 2017/8/23
+   * @Params:
+   * @Return:
+   */
+   Map<String, Object> deleteSelection(String code, int flag);
+   /**
+   * @Author: 小杰
+   * @Description: 分页查询钱袋子充值记录
+   * @Date: 11:05
+   * @Params:
+   * @Return:
+   */
+   Pagination findPaging(JingoRecharge jingoRecharge, int pageNo, int pagesize);
+}

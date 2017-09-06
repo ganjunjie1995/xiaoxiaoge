@@ -1,0 +1,18 @@
+package com.alipay.utils;
+
+/**
+ * <dl>
+ * <dt>Constant</dt>
+ * <dd>Description:类描述</dd>
+ * <dd>Copyright: 版权归杭州京歌科技有限公司所有</dd>
+ * <dd>Company: 杭州京歌科技有限公司</dd>
+ * <dd>CreateDate: 2017/8/17</dd>
+ * </dl>
+ *
+ * @author 小杰
+ */
+public class Constant {
+    public static final String LOGIN_USER = "loginUser";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String RECHARGE_RETURN_URL = "/pureController/postRechargeInfo.do";
+}

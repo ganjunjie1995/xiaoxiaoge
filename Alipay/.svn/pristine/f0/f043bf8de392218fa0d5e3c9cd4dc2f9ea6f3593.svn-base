@@ -1,0 +1,48 @@
+package com.alipay.purse.domain;
+
+/**
+ * Created by zhongchunyan
+ * 用户余额实体类
+ * @Date 2017/8/19 13:11
+ */
+public class JingoPurse {
+    private String pureCode;//主键
+    private String userCode;//用户编码
+    private double pureAvaliableBalance;//可用余额
+    private double pureLockedBalance;//冻结余额
+
+    public JingoPurse() {
+    }
+
+    public String getPureCode() {
+        return pureCode;
+    }
+
+    public void setPureCode(String pureCode) {
+        this.pureCode = pureCode;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public double getPureAvaliableBalance() {
+        return pureAvaliableBalance;
+    }
+
+    public void setPureAvaliableBalance(double pureAvaliableBalance) {
+        this.pureAvaliableBalance = pureAvaliableBalance;
+    }
+
+    public double getPureLockedBalance() {
+        return pureLockedBalance;
+    }
+
+    public void setPureLockedBalance(double pureLockedBalance) {
+        this.pureLockedBalance = pureLockedBalance;
+    }
+}

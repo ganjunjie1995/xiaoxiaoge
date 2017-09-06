@@ -1,0 +1,68 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>账单部分</title>
+</head>
+<body>
+	<div>
+		<span style="padding-left: 440px">全部</span> <span style="padding-left: 30px">|</span>
+		<span style="padding-left: 30px">近一个月</span> <span style="padding-left: 30px">|</span>
+		<span style="padding-left: 30px">近三个月</span>
+	</div>
+	
+	<div style="padding-left: 440px;padding-top: 10px;padding-bottom: 20px">
+		<span>类型:<a href="#" style="text-decoration: none;padding-left: 15px">全部</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">充值</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">提现</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">转账</a>
+		</span>
+	</div>
+	
+	<div style="padding-left: 440px;padding-bottom: 10px">
+		<span>状态:<a href="#" style="text-decoration: none;padding-left: 15px">全部</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">成功</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">进行中</a>
+				<a href="#" style="text-decoration: none;padding-left: 25px">失败</a>
+		</span>
+	</div>
+	
+	<div style="background-color: #EEEEE0;padding-left: 440px">
+		<table border="0">
+			<tr>
+				<th style="padding-left: 20px">创建时间</th>
+				<th style="padding-left: 80px">交易信息</th>
+				<th style="padding-left: 80px">类型</th>
+				<th style="padding-left: 80px">金额</th>
+				<th style="padding-left: 80px">交易状态</th>
+				<th style="padding-left: 80px">操作</th>
+			</tr>
+			<tr style="padding-bottom: 10px">
+				<td>2017-08-19 13:27:14</td>
+				<td style="padding-left: 50px">流水号:20170819083059441284</td>
+				<td style="padding-left: 80px">提现</td>
+				<td style="padding-left: 80px">0.1</td>
+				<td style="padding-left: 90px">成功</td>
+				<td style="padding-left: 70px">
+					<a href="#" style="text-decoration: none">查看</a>
+					<a href="#" style="text-decoration: none">删除</a>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>2017-08-19 13:29:14</td>
+				<td style="padding-left: 50px">流水号:20170818163746131284</td>
+				<td style="padding-left: 80px">充值</td>
+				<td style="padding-left: 80px">0.1</td>
+				<td style="padding-left: 90px">成功</td>
+				<td style="padding-left: 70px">
+					<a href="#" style="text-decoration: none">查看</a>
+					<a href="#" style="text-decoration: none">删除</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

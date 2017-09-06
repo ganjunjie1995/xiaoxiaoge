@@ -1,0 +1,34 @@
+#exit{
+	text-align: right;
+}
+#exit a{
+	text-decoration: none;
+	margin-right: 10px;
+}
+#exit img{
+	margin-right: 500px;
+}
+#title ,#title1{
+	padding-left: 450px;
+}
+#title span{
+	padding-left: 70px;
+}
+#title1 span{
+	margin-right:35px;
+}
+#title3 {
+	padding-left: 450px;
+	padding-top: 30px;
+}
+#title4 #purse,#bean,#bill {
+	text-decoration: none;
+	color: black;
+	margin-right:30px;
+}
+#title4 #recharge,#cash,#transfer {
+	text-decoration: none;
+	padding:15px;
+	color: black;
+	margin-right:30px;
+}

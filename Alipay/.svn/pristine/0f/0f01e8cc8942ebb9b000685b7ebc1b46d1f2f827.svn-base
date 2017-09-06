@@ -1,0 +1,25 @@
+package com.alipay.utils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Created by zhongchunyan
+ * 时间工具类
+ * @Date 2017/8/18 10:13
+ */
+public class DateUtil {
+    private static SimpleDateFormat format ;
+
+    /**
+    * @Author: zhongchunyan
+    * @Description: 返回当前时间
+    * @Date: 2017/8/18
+    * @Params: 
+    * @Return: 
+    */
+    public static String getCurrentDate(final String dateFormat){
+        format = new SimpleDateFormat(dateFormat);
+        return format.format(new Date());
+    }
+}

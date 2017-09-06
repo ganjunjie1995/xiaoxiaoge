@@ -1,0 +1,151 @@
+package com.alipay.goldbean.service.impl;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.goldbean.domain.GBCashOrder;
+import com.alipay.goldbean.domain.GBRechargeOrder;
+import com.alipay.goldbean.domain.GoldBean;
+import com.alipay.goldbean.mapper.GoldBeanMapper;
+import com.alipay.goldbean.service.GoldBeanService;
+import com.alipay.login.entity.Pagination;
+import com.alipay.login.mapper.BaseMapper;
+import com.alipay.login.service.BaseService;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.utils.ContentUtil;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.service.PurseServiceI;
+import com.alipay.utils.AlipayClientUtil;
+import com.alipay.utils.Constant;
+import com.alipay.utils.DateUtil;
+import com.alipay.utils.GeneratorUUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * Created by zhouhongchen on 2017/8/19.
+ */
+@Service("gbService")
+public class GoldBeanServiceImpl extends BaseService implements GoldBeanService{
+    @Resource
+    private GoldBeanMapper gbMapper;
+    @Autowired
+    private PurseServiceI purseService;
+    /*
+    金豆充值
+     */
+    @Override
+    public void gbRecharge(String userCode, Double number,GBRechargeOrder gbro,GoldBean gb) {
+        //查询该userCode在数据库中是否存在
+        GoldBean gbSelect=gbMapper.selectGBByUserCode(userCode);
+        if(null==gbSelect){
+            GoldBean gbInsert=new GoldBean();
+            gbInsert.setUserCode(userCode);
+            gbMapper.insertGB(gbInsert);
+        }
+        gbMapper.rechargeGoldBean(gb);
+        gbMapper.addGBRechargeOrder(gbro);
+    }
+
+    /*
+    金豆提现
+     */
+    @Override
+    public void gbCash(String userCode,Double number) {
+        GBCashOrder gbco=new GBCashOrder();
+        gbco.setUserCode(userCode);
+        gbco.setCashAccount("15178113577");
+        gbco.setCashCode(GeneratorUUID.generate());
+        gbco.setCashMoney(number);
+        gbco.setCashType(1);
+        gbco.setCashDesc("金豆提现");
+        gbco.setCashBeginTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        gbco.setCashEndTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        gbco.setCashInfo("By zhouhongcheng");
+        gbco.setCashStatus(1);
+        //构造JingoPurse对象传入updatePurse（）方法中
+        JingoPurse jp=new JingoPurse();
+        jp.setUserCode(userCode);
+        jp.setPureCode(GeneratorUUID.generate());
+        jp.setPureAvaliableBalance(number);
+        purseService.updatePurse(jp,1);
+
+        GoldBean gb=new GoldBean();
+        gb.setUserCode(userCode);
+        gb.setGbNumber(number);
+        gbMapper.cashGoldBean(gb);
+//        gbMapper.cashGoldBean(userCode,number);
+        gbMapper.addGBCashOrder(gbco);
+
+    }
+
+    /*
+        充值时在controller层调用此方法调用AlipayClient发起支付宝支付调用，并在支付后调用充值方法recharge（）
+     */
+    @Override
+    public void alipay(HttpServletResponse httpResponse,Double rechargeNumber) throws IOException {
+
+        //初始化AlipayClient对象
+        AlipayClient alipayClient = ContentUtil.getClient();
+        System.out.println();
+        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
+        alipayRequest.setReturnUrl("http://domain.com/CallBack/return_url.jsp?amount="+ rechargeNumber);
+        alipayRequest.setNotifyUrl("http://domain.com/CallBack/notify_url.jsp");//在公共参数中设置回跳和通知地址
+        String outTradeNo= GeneratorUUID.generate();
+        alipayRequest.setBizContent("{" +
+                "    \"out_trade_no\":\""+outTradeNo+"\"," +
+                "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
+                "    \"total_amount\":"+rechargeNumber+"," +
+                "    \"subject\":\"金豆充值\"," +
+                "    \"body\":\"Iphone6 16G\"," +
+                "    \"passback_params\":\"merchantBizType%3d3C%26merchantBizNo%3d2016010101111\"," +
+                "    \"extend_params\":{" +
+                "    \"sys_service_provider_id\":\"2088511833207846\"" +
+                "    }"+
+                "  }");//填充业务参数
+        String form="";
+        try {
+            form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        httpResponse.setContentType("text/html;charset=" + "UTF-8");
+        httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
+
+        //用GBRechargeOrder对象保存充值记录信息
+        GBRechargeOrder gbro=new GBRechargeOrder();
+        gbro.setUserCode("402882a35df334f4015df334f45b0000");
+        gbro.setRechargeCode(outTradeNo);
+        gbro.setRechargeMoney(rechargeNumber);
+        gbro.setRechargeSubject("金豆充值");
+        gbro.setRechargeType(1);
+        gbro.setRechargeBeginTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        gbro.setRechargeEndTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        gbro.setRechargeDesc("交易成功");
+        gbro.setRechargeInfo("用户的金豆增加"+new DateUtil().toString().substring(0,3));
+        gbro.setRechargeStatus(1);
+        //更改金豆表的用户金豆余额信息
+        GoldBean gb=new GoldBean();
+        gb.setUserCode("402882a35df334f4015df334f45b0000");
+        gb.setGbNumber(rechargeNumber);
+        gbRecharge(gbro.getUserCode(),rechargeNumber,gbro,gb);
+        System.out.println(gbro);
+
+        httpResponse.getWriter().flush();
+        httpResponse.getWriter().close();
+    }
+
+    @Override
+    public Pagination findPaging(JingoRecharge jingoRecharge, int pageno, int i) {
+         return getPagination(jingoRecharge,pageno,i);
+    }
+
+    @Override
+    public BaseMapper getMapper() {
+        return gbMapper;
+    }
+}

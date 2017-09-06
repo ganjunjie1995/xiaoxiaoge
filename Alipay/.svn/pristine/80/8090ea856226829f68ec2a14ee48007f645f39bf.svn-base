@@ -1,0 +1,108 @@
+package com.alipay.login.controller;
+
+import com.alipay.Imazamox.domain.JingoImRecharge;
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.entity.Pagination;
+import com.alipay.login.service.LoginService;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.purse.service.PurseServiceI;
+import com.alipay.utils.Constant;
+import com.alipay.utils.GeneratorUUID;
+import com.alipay.utils.SessionUtil;
+import org.apache.log4j.helpers.LogLog;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * <dl>
+ * <dt>loginController</dt>
+ * <dd>Description:登录的controller</dd>
+ * <dd>Copyright: 版权归杭州京歌科技有限公司所有</dd>
+ * <dd>Company: 杭州京歌科技有限公司</dd>
+ * <dd>CreateDate: 2017/8/17</dd>
+ * </dl>
+ *
+ * @author 小杰
+ */
+
+@Controller
+public class LoginController {
+    @Autowired
+    private LoginService loginservice;
+    @Autowired
+    private PurseServiceI purseServiceI;
+/**
+* @Author: 小杰
+* @Description: 登录
+* @Date: 15:53
+* @Params: username 用户名，password 密码
+* @Return:
+*/
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login(HttpServletRequest request, String username,String password, HttpServletResponse response, Model model){
+
+        if(username==null||username.equals("")){
+
+            }
+
+        if(password==null||password.equals("")){
+
+        }
+        JingoUser user=loginservice.findByName(username);
+        if(user!=null&&user.getPwd().equals(password)){
+                SessionUtil.setSessionAttribute(Constant.LOGIN_USER,user);
+
+        }
+        model.addAttribute("time",new Date()+"");
+        model.addAttribute("user",user);
+        return "home/middle";
+
+    }
+/**
+* @Author: 小杰
+* @Description: 注册
+* @Date: 15:54
+* @Params: username 用户名，password 密码
+* @Return:
+*/
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public void register(HttpServletRequest request, @RequestParam String username
+            , @RequestParam String password,HttpServletResponse response){
+        if(username==null||username.equals("")){
+
+        }
+
+        if(loginservice.findByName(username)!=null){
+            LogLog.debug("用户名已存在");
+            return;
+        }
+
+        if(password==null||password.equals("")){
+
+        }
+        JingoUser user=new JingoUser();
+        String userCode=GeneratorUUID.generate();
+
+        user.setUserName(username);
+        user.setPwd(password);
+        user.setUserCode(userCode);
+        user.setUserPhone("18170141141");
+        user.setVvid("18170141141_a");
+        loginservice.register(user);
+
+        SessionUtil.setSessionAttribute(Constant.LOGIN_USER,user);
+       /* Pagination pagination=loginservice.findPaging(user,1,2);
+        int a=0;*/
+    }
+
+}

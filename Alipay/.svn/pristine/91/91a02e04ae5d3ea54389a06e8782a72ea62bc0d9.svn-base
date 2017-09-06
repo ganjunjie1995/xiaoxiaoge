@@ -1,0 +1,26 @@
+package com.alipay.utils;
+import java.io.*;
+import java.util.Properties;
+
+/**
+ * Created by zhongchunyan on 2017/8/1.
+ */
+public class PropertyUtil {
+    private Properties props=null;
+    public PropertyUtil(String filePath) {
+        InputStream in = PropertyUtil.class.getClassLoader().getResourceAsStream(filePath);
+        props = new Properties();
+        try {
+            props.load(in);
+            //关闭资源
+            in.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public String readValue(String key)  {
+        return  props.getProperty(key);
+    }
+
+
+}

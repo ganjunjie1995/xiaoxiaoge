@@ -1,0 +1,68 @@
+package com.alipay.utils;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+
+/**
+ * Created by rezye on 2017/8/1.
+ */
+public class ContentUtil {
+    private static AlipayClient ac;
+    private static String returnUrl;
+    private static String notifyUrl;
+    static{
+        if(ac == null){
+            PropertyUtil p = new PropertyUtil("zfbinfo.properties");
+            String appId = p.readValue("appid");
+            String privateId = p.readValue("private_key");
+            String publicKey = p.readValue("alipay_public_key");
+            String signType = p.readValue("sign_type");
+            returnUrl = p.readValue("alipay.return_url");
+            notifyUrl = p.readValue("alipay.notify_url");
+            ac = new DefaultAlipayClient(p.readValue("open_api_domain"),appId, privateId,"json","GBK", publicKey, signType);
+        }
+    }
+
+    public static AlipayClient getClient(){
+        return ac;
+    }
+
+    public static String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public static void setReturnUrl(String returnUrl) {
+        ContentUtil.returnUrl = returnUrl;
+    }
+
+    public static String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public static void setNotifyUrl(String notifyUrl) {
+        ContentUtil.notifyUrl = notifyUrl;
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 获取删除标识
+    * @Date: 2017/8/23
+    * @Params: 
+    * @Return: 
+    */
+    public static int getDeleteFlag(String code){
+        String temp = code.substring(0,1);
+        switch(temp){
+            case "a":
+                return 1;
+            case "b":
+                return 2;
+            case "c":
+                return 3;
+            default:
+                return 4;
+        }
+    }
+}
+

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipay.goldbean.mapper.GoldBeanMapper">
+
+    <resultMap id="GBRechargeOrderResultMap" type="com.alipay.goldbean.domain.GBRechargeOrder">
+        <result column="recharge_code" property="rechargeCode" />
+        <result column="user_code" property="userCode" />
+        <result column="recharge_money" property="rechargeMoney" />
+        <result column="recharge_subject" property="rechargeSubject" />
+        <result column="recharge_type" property="rechargeType" />
+        <result column="recharge_begin_time" property="rechargeBeginTime" />
+        <result column="recharge_end_time" property="rechargeEndTime"/>
+        <result column="recharge_desc" property="rechargeDesc"/>
+        <result column="recharge_info" property="rechargeInfo"/>
+        <result column="recharge_status" property="rechargeStatus"/>
+    </resultMap>
+
+    <resultMap id="GBCashOrderResultMap" type="com.alipay.goldbean.domain.GBCashOrder">
+        <result column="cash_code" property="cashCode" />
+        <result column="user_code" property="userCode" />
+        <result column="cash_account" property="cashAccount" />
+        <result column="cash_money" property="cashMoney" />
+        <result column="cash_type" property="cashType" />
+        <result column="cash_desc" property="cashDesc" />
+        <result column="cash_begin_time" property="cashBeginTime"/>
+        <result column="cash_end_time" property="cashEndTime"/>
+        <result column="cash_info" property="cashInfo"/>
+        <result column="cash_status" property="cashStatus"/>
+    </resultMap>
+
+    <resultMap id="JingoUserMap" type="com.alipay.goldbean.domain.GoldBean">
+        <result column="gb_code" property="gbCode" />
+        <result column="user_code" property="userCode" javaType="string" jdbcType="VARCHAR"/>
+        <result column="gb_number" property="gbNumber" />
+    </resultMap>
+
+    <resultMap id="baseViewMap" type="com.alipay.purse.domain.JingoViewQuery">
+        <result column="begin_time" property="beginTime" />
+        <result column="code" property="code" />
+        <result column="type" property="type" />
+        <result column="money" property="money" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <!-- 充值金豆-->
+    <!-- 1.充值金豆时更新金豆表jingo_gold_bean中的金豆数目-->
+    <update id="rechargeGoldBean" parameterType="com.alipay.goldbean.domain.GoldBean">
+        UPDATE jingo_gold_bean
+        SET gb_number = gb_number + #{gbNumber}
+        WHERE user_code = #{userCode}
+    </update>
+
+    <!-- 2.充值金豆时在充值表jingo_recharge增加记录-->
+    <insert id="addGBRechargeOrder" parameterType="com.alipay.goldbean.domain.GBRechargeOrder">
+        INSERT INTO jingo_recharge(recharge_code,user_code,recharge_money,recharge_subject,recharge_type,recharge_begin_time,recharge_end_time,recharge_desc,recharge_info,recharge_status)
+        VALUES (#{rechargeCode},#{userCode},#{rechargeMoney},#{rechargeSubject},#{rechargeType},#{rechargeBeginTime},#{rechargeEndTime},#{rechargeDesc},#{rechargeInfo},#{rechargeStatus})
+    </insert>
+
+    <!-- 提现金豆-->
+    <!-- 1.提现金豆时更新金豆表jingo_gold_bean中的金豆数目-->
+    <update id="cashGoldBean" parameterType="com.alipay.goldbean.domain.GoldBean">
+        UPDATE jingo_gold_bean
+        SET gb_number = gb_number - #{gbNumber}
+        WHERE user_code = #{userCode}
+    </update>
+
+    <!-- 2.提现金豆时更新用户余额信息 ,不在此处写逻辑，在service层直接调用PurseServiceImpl实现-->
+
+    <!-- 3.提现金豆时在提现表jingo_cash增加记录-->
+    <insert id="addGBCashOrder" parameterType="com.alipay.goldbean.domain.GBCashOrder">
+        INSERT INTO jingo_cash(cash_code,user_code,cash_account,cash_money,cash_type,cash_desc,cash_begin_time,cash_end_time,cash_info,cash_status)
+        VALUES (#{cashCode},#{userCode},#{cashAccount},#{cashMoney},#{cashType},#{cashDesc},#{cashBeginTime},#{cashEndTime},#{cashInfo},#{cashStatus})
+    </insert>
+
+    <!--查询用户数量-->
+    <select id="queryByCount" resultType="java.lang.Integer" parameterType="object">
+        select count(*) from
+        view_query_gold
+        where 1=1
+    </select>
+    <!--查询钱袋充值记录-->
+    <select id="queryByList" resultMap="baseViewMap" parameterType="object">
+        select * from
+        view_query_gold
+        where 1=1
+        order by begin_time desc
+        ${pageQueryCondition}
+    </select>
+
+
+</mapper>

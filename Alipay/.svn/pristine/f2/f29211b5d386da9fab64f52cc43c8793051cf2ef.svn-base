@@ -1,0 +1,57 @@
+package com.alipay.Imazamox.domain;
+
+/**
+ * Created by zhongchunyan
+ * 用户信息实体
+ * @Date 2017/8/19 14:22
+ */
+public class JingoUser {
+    private String userCode;//主键
+    private String userName;//用户姓名
+    private String userPhone;//用户手机
+    private String vvid;
+    private String pwd;//密码
+
+    public JingoUser() {
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getVvid() {
+        return vvid;
+    }
+
+    public void setVvid(String vvid) {
+        this.vvid = vvid;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+}

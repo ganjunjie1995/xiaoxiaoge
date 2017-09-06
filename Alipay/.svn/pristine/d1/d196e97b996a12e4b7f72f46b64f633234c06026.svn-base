@@ -1,0 +1,111 @@
+package com.alipay.purse.mapper;
+
+
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.mapper.BaseMapper;
+import com.alipay.purse.domain.JingoCash;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.purse.domain.JingoTransfer;
+import com.alipay.purse.domain.*;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * Created by zhongchunyan
+ *
+ * @Date 2017/8/17 17:09
+ */
+@Repository(value = "pureMapper")
+public interface PurseMapper extends BaseMapper<JingoRecharge,JingoRecharge>{
+    /**
+    * @Author: zhongchunyan
+    * @Description: 插入充值信息
+    * @Date: 2017/8/17
+    * @Params: 
+    * @Return: 
+    */
+    int insertRecharge(final JingoRecharge recharge);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 更新充值信息
+    * @Date: 2017/8/18
+    * @Params: 
+    * @Return: 
+    */
+    int updateRecharge(final JingoRecharge recharge);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 插入余额提现信息
+    * @Date: 2017/8/19
+    * @Params:
+    * @Return:
+    */
+    int insertCash(JingoCash cash);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 查询当前用户的余额
+    * @Date: 2017/8/19
+    * @Params: 
+    * @Return: 
+    */
+    List<JingoPurse> queryUserPurse(@Param("userCode")String userCode, @Param("userPhone")String userPhone);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 插入用户余额信息
+    * @Date: 2017/8/19
+    * @Params:
+    * @Return:
+    */
+    int insertPurse(JingoPurse purse);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 更新用户余额信息
+    * @Date: 2017/8/19
+    * @Params: 
+    * @Return: 
+    */
+    int updatePurse(JingoPurse purse);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 插入用户转账信息
+    * @Date: 2017/8/21
+    * @Params: 
+    * @Return: 
+    */
+    int insertTransfer(JingoTransfer transfer);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 获取用户信息
+    * @Date: 2017/8/22
+    * @Params: 
+    * @Return: 
+    */
+    List<JingoUser> queryUserInfo(@Param("userCode")final String userCode, @Param("userPhone")final String userPhone);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 插入收款信息
+    * @Date: 2017/8/22
+    * @Params:
+    * @Return:
+    */
+    int insertMessage(JingoMessage msg);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 查询当前用户需付款的信息
+    * @Date: 2017/8/22
+    * @Params:
+    * @Return:
+    */
+    List<JingoMessage> queryMessage(@Param("userCode") final String userCode);
+    /**
+    * @Author: zhongchunyan
+    * @Description: 删除选中数据
+    * @Date: 2017/8/23
+    * @Params:
+    * @Return:
+    */
+    int deleteSelection(@Param("code")String code, @Param("flag")int flag);
+}

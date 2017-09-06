@@ -1,0 +1,7 @@
+a{
+	display: block;
+	box-sizing: border-box;
+	text-decoration: underline;
+	text-decoration: none;
+	outline: none !important;
+}

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="alipay-sdk-java20170725114550">
+    <CLASSES>
+      <root url="jar://F:/阿里jar包/alipay-sdk-java20170725114550.jar!/" />
+      <root url="jar://F:/阿里jar包/commons-logging-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

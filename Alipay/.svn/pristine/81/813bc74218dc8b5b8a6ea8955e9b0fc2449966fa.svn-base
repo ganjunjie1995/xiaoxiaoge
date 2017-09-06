@@ -1,0 +1,48 @@
+package com.alipay.utils;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpSession;
+
+/**
+ * Created by zhongchunyan
+ * 通过SpringContent获取session
+ * @Date 2017/8/17 15:36
+ */
+public class SessionUtil {
+    
+    /**
+    * @Author: zhongchunyan
+    * @Description: 获取当前session
+    * @Date: 2017/8/17
+    * @Params: 
+    * @Return: 
+    */
+    public static HttpSession getSession(){
+        return ((ServletRequestAttributes)RequestContextHolder
+                .getRequestAttributes())
+                .getRequest()
+                .getSession();
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 设置session属性
+    * @Date: 2017/8/17
+    * @Params: 
+    * @Return: 
+    */
+    public static void setSessionAttribute(String key, Object value){
+        getSession().setAttribute(key, value);
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 获取对应session数据
+    * @Date: 2017/8/17
+    * @Params: 
+    * @Return: 
+    */
+    public static Object getSessionAttribute(String key){
+        return  getSession().getAttribute(key);
+    }
+}

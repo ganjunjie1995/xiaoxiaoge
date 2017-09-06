@@ -1,0 +1,104 @@
+package com.alipay.purse.domain;
+
+import com.alipay.login.entity.BaseModel;
+
+/**
+ * Created by rezye on 2017/8/17.
+ * 余额充值信息表
+ * @Date 2017/8/17 14:31
+ */
+public class JingoRecharge extends BaseModel{
+    private String rechargeCode;//主键
+    private String userCode;//用户编码
+    private double rechargeMoney;//充值金额
+    private String rechargeSubject;//充值标题
+    private byte rechargeType;//充值类型 : 1支付宝转余额 2支付宝转金豆 3金豆转余额
+    private String rechargeBeginTime;//充值开始时间
+    private String rechargeEndTime;//充值结束时间
+    private String rechargeDesc;//充值描述
+    private String rechargeInfo;//充值信息
+    private byte rechargeStatus;//充值状态 1未完成 2完成
+
+    public JingoRecharge() {
+    }
+
+    public String getRechargeCode() {
+        return rechargeCode;
+    }
+
+    public void setRechargeCode(String rechargeCode) {
+        this.rechargeCode = rechargeCode;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public double getRechargeMoney() {
+        return rechargeMoney;
+    }
+
+    public void setRechargeMoney(double rechargeMoney) {
+        this.rechargeMoney = rechargeMoney;
+    }
+
+    public String getRechargeSubject() {
+        return rechargeSubject;
+    }
+
+    public void setRechargeSubject(String rechargeSubject) {
+        this.rechargeSubject = rechargeSubject;
+    }
+
+    public byte getRechargeType() {
+        return rechargeType;
+    }
+
+    public void setRechargeType(byte rechargeType) {
+        this.rechargeType = rechargeType;
+    }
+
+    public String getRechargeBeginTime() {
+        return rechargeBeginTime;
+    }
+
+    public void setRechargeBeginTime(String rechargeBeginTime) {
+        this.rechargeBeginTime = rechargeBeginTime;
+    }
+
+    public String getRechargeEndTime() {
+        return rechargeEndTime;
+    }
+
+    public void setRechargeEndTime(String rechargeEndTime) {
+        this.rechargeEndTime = rechargeEndTime;
+    }
+
+    public String getRechargeDesc() {
+        return rechargeDesc;
+    }
+
+    public void setRechargeDesc(String rechargeDesc) {
+        this.rechargeDesc = rechargeDesc;
+    }
+
+    public String getRechargeInfo() {
+        return rechargeInfo;
+    }
+
+    public void setRechargeInfo(String rechargeInfo) {
+        this.rechargeInfo = rechargeInfo;
+    }
+
+    public byte getRechargeStatus() {
+        return rechargeStatus;
+    }
+
+    public void setRechargeStatus(byte rechargeStatus) {
+        this.rechargeStatus = rechargeStatus;
+    }
+}

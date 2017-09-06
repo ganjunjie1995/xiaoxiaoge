@@ -1,0 +1,84 @@
+package com.alipay.purse.domain;
+
+/**
+ * Created by zhongchunyan
+ * 转账信息表
+ * @Date 2017/8/19 13:19
+ */
+public class JingoTransfer {
+    private String transCode;//主键
+    private String userCode;//用户编码
+    private double transMoney;//转账金额
+    private String transRemark;//转账备注
+    private String receiveAccount;//接收用户账号
+    private String transBeginTime;//转账开始时间
+    private String transEndTime;//转账结束时间
+    private String transInfo;//转账信息
+
+    public JingoTransfer() {
+    }
+
+    public String getTransCode() {
+        return transCode;
+    }
+
+    public void setTransCode(String transCode) {
+        this.transCode = transCode;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public double getTransMoney() {
+        return transMoney;
+    }
+
+    public void setTransMoney(double transMoney) {
+        this.transMoney = transMoney;
+    }
+
+    public String getTransRemark() {
+        return transRemark;
+    }
+
+    public void setTransRemark(String transRemark) {
+        this.transRemark = transRemark;
+    }
+
+    public String getReceiveAccount() {
+        return receiveAccount;
+    }
+
+    public void setReceiveAccount(String receiveAccount) {
+        this.receiveAccount = receiveAccount;
+    }
+
+    public String getTransBeginTime() {
+        return transBeginTime;
+    }
+
+    public void setTransBeginTime(String transBeginTime) {
+        this.transBeginTime = transBeginTime;
+    }
+
+    public String getTransEndTime() {
+        return transEndTime;
+    }
+
+    public void setTransEndTime(String transEndTime) {
+        this.transEndTime = transEndTime;
+    }
+
+    public String getTransInfo() {
+        return transInfo;
+    }
+
+    public void setTransInfo(String transInfo) {
+        this.transInfo = transInfo;
+    }
+}

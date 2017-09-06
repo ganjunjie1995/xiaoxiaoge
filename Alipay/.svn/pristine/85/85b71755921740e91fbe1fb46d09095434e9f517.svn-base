@@ -1,0 +1,93 @@
+package com.alipay.purse.domain;
+
+/**
+ * Created by zhongchunyan
+ * 收款消息实体
+ * @Date 2017/8/22 10:19
+ */
+public class JingoMessage {
+    private String messageCode;//主键
+    private String messageTitle;//消息标题
+    private String messageDesc;//消息描述
+    private String messageCreateTime;//消息创建时间
+    private String messageReadTime;//消息阅读时间
+    private String messageCreater;//消息创建者
+    private String messageReceiver;//消息接收者
+    private byte messageStatus;//消息阅读状态 1未读 2已读
+    private double messageMoney;//收款金额
+
+    public JingoMessage() {
+    }
+
+    public String getMessageCode() {
+        return messageCode;
+    }
+
+    public void setMessageCode(String messageCode) {
+        this.messageCode = messageCode;
+    }
+
+    public String getMessageTitle() {
+        return messageTitle;
+    }
+
+    public void setMessageTitle(String messageTitle) {
+        this.messageTitle = messageTitle;
+    }
+
+    public String getMessageDesc() {
+        return messageDesc;
+    }
+
+    public void setMessageDesc(String messageDesc) {
+        this.messageDesc = messageDesc;
+    }
+
+    public String getMessageCreateTime() {
+        return messageCreateTime;
+    }
+
+    public void setMessageCreateTime(String messageCreateTime) {
+        this.messageCreateTime = messageCreateTime;
+    }
+
+    public String getMessageReadTime() {
+        return messageReadTime;
+    }
+
+    public void setMessageReadTime(String messageReadTime) {
+        this.messageReadTime = messageReadTime;
+    }
+
+    public String getMessageCreater() {
+        return messageCreater;
+    }
+
+    public void setMessageCreater(String messageCreater) {
+        this.messageCreater = messageCreater;
+    }
+
+    public String getMessageReceiver() {
+        return messageReceiver;
+    }
+
+    public void setMessageReceiver(String messageReceiver) {
+        this.messageReceiver = messageReceiver;
+    }
+
+    public byte getMessageStatus() {
+        return messageStatus;
+    }
+
+    public void setMessageStatus(byte messageStatus) {
+        this.messageStatus = messageStatus;
+    }
+
+    public double getMessageMoney() {
+        return messageMoney;
+    }
+
+    public void setMessageMoney(double messageMoney) {
+        this.messageMoney = messageMoney;
+    }
+}

@@ -1,0 +1,44 @@
+package com.alipay.goldbean.service;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.goldbean.domain.GBCashOrder;
+import com.alipay.goldbean.domain.GBRechargeOrder;
+import com.alipay.login.entity.Pagination;
+import com.alipay.login.service.BaseService;
+import com.alipay.purse.domain.JingoRecharge;
+import org.springframework.stereotype.Service;
+import com.alipay.goldbean.domain.GoldBean;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * Created by zhouhongcheng on 2017/8/19.
+ */
+
+public interface GoldBeanService {
+
+    /*
+        金豆充值
+        1.用户的金豆增加
+                GoldBeanMapper      >   updateGoldBean(String userCode,Integer number)
+        2.充值记录表增加一条记录
+                GBRechargeOrderMapper     >   addGBRechargeOrder(GBRechargeOrder gbro)
+     */
+    public void gbRecharge(String userCode,Double number,GBRechargeOrder gbco,GoldBean gb);
+
+    /*
+        金豆提现
+        1.收到金豆用户的金豆数目减少，用户的余额增加
+                GoldBeanMapper      >   updateGoldBean(String userCode,Integer number)
+        2.提现记录表增加一条记录
+                GoldBeanMapper         >   addGBCashOrder(GBCashOrder gbco)
+     */
+    public void gbCash(String userCode,Double number);
+
+    //跳转支付宝支付页面
+    public void alipay(HttpServletResponse httpResponse,Double totalAmount) throws IOException, AlipayApiException;
+
+    Pagination findPaging(JingoRecharge jingoRecharge, int pageno, int i);
+}

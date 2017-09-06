@@ -1,0 +1,23 @@
+package com.alipay.login.entity;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+/**
+* @Author: 小杰
+* @Description: 分页信息model
+* @Date: 15:55
+*/
+public class BaseModel {
+    @JsonIgnore
+    public String pageQueryCondition;
+
+    public void setPageQueryCondition(int pageOffset, int pageSize) {
+        this.pageQueryCondition = " limit " + pageSize + " offset " + pageOffset;
+    }
+
+    @JsonIgnore
+    public String getPageQueryCondition() {
+        return pageQueryCondition == null ? "" : pageQueryCondition;
+    }
+
+}

@@ -1,0 +1,67 @@
+package com.alipay.login.service.serviceimpl;
+
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.entity.Pagination;
+import com.alipay.login.mapper.BaseMapper;
+import com.alipay.login.mapper.LoginMapper;
+import com.alipay.login.service.BaseService;
+import com.alipay.login.service.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * <dl>
+ * <dt>loginServiceImpl</dt>
+ * <dd>Description:登录的service</dd>
+ * <dd>Copyright: 版权归杭州京歌科技有限公司所有</dd>
+ * <dd>Company: 杭州京歌科技有限公司</dd>
+ * <dd>CreateDate: 2017/8/17</dd>
+ * </dl>
+ *
+ * @author 小杰
+ */
+@Service
+public class LoginServiceImpl extends BaseService implements LoginService {
+
+    @Autowired
+    private LoginMapper loginMapper;
+
+    public LoginMapper getLoginMapper() {
+        return loginMapper;
+    }
+
+    public void setLoginMapper(LoginMapper loginMapper) {
+        this.loginMapper = loginMapper;
+    }
+
+    public JingoUser findByName(String username) {
+        return  getLoginMapper().findByName(username);
+    }
+
+    @Override
+    public void register(JingoUser user) {
+
+        getLoginMapper().register(user);
+    }
+
+    /**
+    * @Author: 小杰
+    * @Description:分页数据查询
+    * @Date: 15:56
+    * @Params:user 用户对象，pageNO 页码，pageSize 一页数据量
+    * @Return:分页封装对象
+    */
+    @Override
+    public Pagination findPaging(JingoUser user,int pageNo,int pageSize) {
+        if(pageSize==0){
+            pageSize=10;
+        }
+        return getPagination(user,pageNo,pageSize);
+    }
+
+
+    @Override
+    public BaseMapper getMapper() {
+        return getLoginMapper();
+    }
+}

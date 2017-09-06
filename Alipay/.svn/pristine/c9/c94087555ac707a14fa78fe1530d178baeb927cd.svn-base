@@ -1,0 +1,32 @@
+package com.alipay.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.apache.ibatis.io.Resources;
+
+
+
+public class PropertiesUtil {
+
+	public static Properties getProperties(String url){
+		
+		Properties prop=new Properties();
+		InputStream in=null;
+		
+		try {
+			in = Resources.getResourceAsStream(url);
+			prop.load(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return prop;
+	}
+}

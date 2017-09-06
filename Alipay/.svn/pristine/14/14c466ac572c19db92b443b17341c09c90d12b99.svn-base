@@ -1,0 +1,233 @@
+package com.alipay.purse.service.serviceimpl;
+
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.entity.Pagination;
+import com.alipay.login.mapper.BaseMapper;
+import com.alipay.login.service.BaseService;
+import com.alipay.purse.domain.JingoCash;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.purse.domain.JingoTransfer;
+import com.alipay.purse.domain.*;
+import com.alipay.purse.mapper.PurseMapper;
+import com.alipay.purse.service.PurseServiceI;
+import com.alipay.utils.Constant;
+import com.alipay.utils.DateUtil;
+import com.alipay.utils.GeneratorUUID;
+import com.alipay.utils.SessionUtil;
+import org.apache.ibatis.session.SqlSessionException;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by zhongchunyan
+ *
+ * @Date 2017/8/17 16:15
+ */
+@Service(value = "pureService")
+public class PurseServiceImpl extends BaseService implements PurseServiceI {
+    private PurseMapper purseMapper;
+    private Logger log = Logger.getLogger(getClass());
+    @Autowired
+    public void setPurseMapper(PurseMapper purseMapper){
+        this.purseMapper = purseMapper;
+    }
+
+    @Override
+    public void saveRecharge(double amount, String rechargeCode, String subject) {
+
+        JingoUser currentUser = (JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        JingoRecharge recharge = new JingoRecharge();
+        recharge.setRechargeCode(rechargeCode);
+        recharge.setRechargeSubject(subject);
+        recharge.setRechargeMoney(amount);
+        recharge.setRechargeBeginTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        recharge.setRechargeStatus((byte)1);
+        recharge.setUserCode(currentUser.getUserCode());
+        //recharge.setUserCode("402882a35df334f4015df334f45b0000");
+        recharge.setRechargeType((byte)1);
+        int effectNum = 0;
+        try{
+            effectNum = purseMapper.insertRecharge(recharge);
+        }catch(Exception se){
+            se.printStackTrace();
+            log.debug("saveRecharge---->Sqlerr");
+        }
+    }
+
+    @Override
+    public Map<String, Object> updateRecharge(JingoRecharge recharge) {
+        Map<String, Object> reMap = new HashMap<>();
+        recharge.setRechargeEndTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        recharge.setRechargeStatus((byte) 2);
+        int effectNum = 0;
+        try{
+            effectNum = purseMapper.updateRecharge(recharge);
+        }catch(SqlSessionException se){
+            se.printStackTrace();
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "更新数据失败");
+            return reMap;
+        }
+        if(effectNum <= 0){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "更新失败");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "更新成功");
+        return reMap;
+    }
+
+    @Override
+    public Map<String, Object> saveCash(JingoCash cash) {
+        Map<String, Object> reMap = new HashMap<>();
+        int effectNum = 0;
+        try{
+            effectNum = purseMapper.insertCash(cash);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.debug("saveCash--->db ERRO");
+            reMap.put("errcode", -2);
+            reMap.put("errmsg", "插入数据库出错!");
+            return reMap;
+        }
+        if(effectNum <= 0){
+            reMap.put("errcode", -2);
+            reMap.put("errmsg", "插入数据库出错!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "提现成功!");
+        return reMap;
+    }
+
+    @Override
+    public int updatePurse(JingoPurse purse,int flag) {
+        List<JingoPurse> purses = getPurse(purse.getUserCode(), null);
+        //用户是否第一次充值
+        if(purses.size() <= 0){
+            purse.setPureCode(GeneratorUUID.generate());
+            try{
+                purseMapper.insertPurse(purse);
+            }catch(Exception e){
+                e.printStackTrace();
+                log.debug("updatePurse----->插入出错!");
+                return 0;
+            }
+        }else{
+            JingoPurse _p = purses.get(0);
+            double _amount = _p.getPureAvaliableBalance();
+            if(flag == 1){//充值
+                purse.setPureAvaliableBalance(purse.getPureAvaliableBalance() + _amount);
+            }else{//提现
+                purse.setPureAvaliableBalance(_amount - purse.getPureAvaliableBalance() );
+            }
+            try{
+                purseMapper.updatePurse(purse);
+            }catch(Exception e){
+                e.printStackTrace();
+                log.debug("updatePurse----->更新出错!");
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public List<JingoPurse> getPurse(String userCode, String userPhone) {
+        List<JingoPurse> purses = new ArrayList<>();
+        try{
+            purses = purseMapper.queryUserPurse(userCode,userPhone);
+        }catch(Exception e){
+            e.printStackTrace();
+            log.debug("updatePurse----->查询数据库出错!");
+        }
+        return purses;
+    }
+
+    @Override
+    public Map<String, Object> transferPurse(JingoPurse fromPurse, JingoPurse targetPurse, JingoTransfer transfer, int flag) {
+        Map<String, Object> reMap = new HashMap<>();
+        transfer.setTransBeginTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        transfer.setTransEndTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        try{
+            purseMapper.updatePurse(fromPurse);
+            if(flag == 1){
+                purseMapper.insertPurse(targetPurse);
+            }else{
+                purseMapper.updatePurse(targetPurse);
+            }
+            purseMapper.insertTransfer(transfer);
+        }catch(Exception e){
+            e.printStackTrace();
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "付款失败!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "成功向" + targetPurse.getUserCode() + "付款" + transfer.getTransMoney() + "元");
+        return reMap;
+    }
+
+    @Override
+    public Pagination findPaging(JingoRecharge jingoRecharge, int pageNo, int pagesize) {
+        return getPagination(jingoRecharge,pageNo,pagesize);
+    }
+
+    @Override
+    public BaseMapper getMapper() {
+        return purseMapper;
+    }
+
+    @Override
+    public Map<String, Object> updateMessage(JingoMessage msg) {
+        Map<String, Object> reMap = new HashMap<>();
+        int effectNum = 0;
+        try{
+            effectNum = purseMapper.insertMessage(msg);
+        }catch(Exception e){
+            e.printStackTrace();
+            reMap.put("errcode", -2);
+            reMap.put("errmsg", "收款信息发送失败!");
+            return reMap;
+        }
+        if(effectNum <= 0){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "收款信息发送失败!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "收款信息发送成功");
+        return reMap;
+    }
+
+    @Override
+    public Map<String, Object> deleteSelection(String code, int flag) {
+        Map<String, Object> reMap = new HashMap<>();
+        int effectNum = 0;
+        try{
+            effectNum = purseMapper.deleteSelection(code, flag);
+        }catch(Exception e){
+            e.printStackTrace();
+            reMap.put("errcode", -2);
+            reMap.put("errmsg", "删除选中信息失败!");
+            return reMap;
+        }
+        if(effectNum <= 0){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "删除选中信息失败!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "删除选中信息成功!");
+        return reMap;
+    }
+
+}

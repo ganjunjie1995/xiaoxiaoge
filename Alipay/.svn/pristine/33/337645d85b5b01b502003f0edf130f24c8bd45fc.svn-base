@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="api">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://F:/软件/alipay-sdk-java20170725114550-source.jar!/com/alipay/api" />
+    </SOURCES>
+  </library>
+</component>

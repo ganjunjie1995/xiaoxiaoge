@@ -1,0 +1,92 @@
+package com.alipay.utils;
+import com.alipay.login.entity.JingoUser;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.mapper.PurseMapper;
+import com.alipay.purse.service.PurseServiceI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by zhongchunyan
+ * 判断余额是否足够
+ * @Date 2017/8/21 13:50
+ */
+@Component
+public class PurseIsEnough {
+    @Autowired
+    private  PurseServiceI purseService;
+    @Autowired
+    private PurseMapper purseMapper;
+    private static PurseIsEnough purseIsEnough;
+
+    public void setPurseServiceI(PurseServiceI purseService){
+        this.purseService = purseService;
+    }
+
+    @PostConstruct// servlet启动即执行
+    public void init(){
+        purseIsEnough = this;
+        purseIsEnough.purseService = this.purseService;
+        purseIsEnough.purseMapper = this.purseMapper;
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 判断用户余额是否足够
+    * @Date: 2017/8/21
+    * @Params: 
+    * @Return: 
+    */
+    public static Map<String, Object> judgePurse(final double amount){
+        Map<String , Object> reMap = new HashMap<>();
+        JingoUser user = (JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        List<JingoPurse> purses =  purseIsEnough.purseService.getPurse(user.getUserCode(),null);
+        if(purses.size() <= 0){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "账户余额不足!");
+            return reMap;
+        }
+        JingoPurse purse = purses.get(0);
+        if(amount > purse.getPureAvaliableBalance()){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "账户可用余额不足!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("errmsg", "余额可用!");
+        reMap.put("userPurse", purse);
+        return reMap;
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 判断用户是否存在
+    * @Date: 2017/8/22
+    * @Params:
+    * @Return:
+    */
+    public static Map<String, Object> isUserExist(final String userCode, final String userPhone){
+        Map<String , Object> reMap = new HashMap<>();
+        List<JingoUser> users = new ArrayList<>();
+        try{
+            users = purseIsEnough.purseMapper.queryUserInfo(userCode, userPhone);
+        }catch(Exception e){
+            e.printStackTrace();
+            reMap.put("errcode", -2);
+            reMap.put("errmsg", "接收账户不存在!");
+            return reMap;
+        }
+        if(users.size() <= 0) {
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "接收账户不存在!");
+            return reMap;
+        }
+        reMap.put("errcode", 0);
+        reMap.put("user", users.get(0));
+        return reMap;
+    }
+}

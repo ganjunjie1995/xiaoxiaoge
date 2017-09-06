@@ -1,0 +1,25 @@
+#cash_div{
+	height:600px;
+	width:1000px;
+	margin:0 auto;
+}
+#div_f{
+	border-left:1px #ccc solid;
+	border-right:1px #ccc solid;
+	border-bottom:1px #ccc solid;
+	height:500px;
+	width:1000px;
+	padding-top:50px;
+	padding-left: 45px;
+}
+#div_ul ul li{
+	border:1px #ccc solid;
+	width:200px;
+	list-style:none;
+	float:left;
+	margin-bottom: -1px;
+	position: relative;
+	text-align: center;
+	/* webkit-text-size-adjust: 100%; */
+    padding: 10px 15px 10px 15px;
+}

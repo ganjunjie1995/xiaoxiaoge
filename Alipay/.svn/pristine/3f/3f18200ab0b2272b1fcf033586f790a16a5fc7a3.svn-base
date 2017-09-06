@@ -1,0 +1,14 @@
+package com.alipay.Imazamox.mapper;
+
+import com.alipay.Imazamox.domain.JingoImRecharge;
+
+import java.util.Map;
+
+/**
+ * Created by zxj20 on 2017/8/19.
+ */
+public interface RechargeMapper {
+    int UpdateRechargeInfo(JingoImRecharge jic);
+
+    int insertRecharge(JingoImRecharge jic);
+}

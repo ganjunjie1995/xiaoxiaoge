@@ -1,0 +1,24 @@
+package com.alipay.utils;
+
+import java.util.Properties;
+
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+
+public class AlipayClientUtil {
+
+	public static AlipayClient getAlipayClient(){
+		
+		//读取alipayConfig.properties配置文件
+		Properties prop=PropertiesUtil.getProperties("alipayconfig.properties");
+		String url=prop.getProperty("url");
+		String app_id=prop.getProperty("app_id");
+		String public_key=prop.getProperty("public_key");
+		String private_key=prop.getProperty("private_key");
+		String CHARSET=prop.getProperty("CHARSET");
+		String FORMAT=prop.getProperty("FORMAT");
+		String SIGN_TYPE=prop.getProperty("SIGN_TYPE");
+		AlipayClient alipayClient=new DefaultAlipayClient(url,app_id,private_key,FORMAT,CHARSET,public_key,SIGN_TYPE);
+		return alipayClient;
+	}
+}

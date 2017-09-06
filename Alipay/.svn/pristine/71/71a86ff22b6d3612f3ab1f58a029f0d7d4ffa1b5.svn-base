@@ -1,0 +1,154 @@
+package com.alipay.goldbean.domain;
+
+import java.io.Serializable;
+
+/**
+ * 金豆提现记录表
+ * Created by zhuuhongcheng on 2017/8/18.
+ */
+public class GBCashOrder implements Serializable {
+
+    //用户编号(外键)
+    private String userCode;
+
+    //提现账号
+    private String cashAccount;
+
+    //提现流水号
+    private String cashCode;
+
+    //提现金额
+    private Double cashMoney;
+
+    //提现类型
+    private Integer cashType;
+
+    //提现描述
+    private String cashDesc;
+
+    //提现开始时间
+    private String cashBeginTime;
+
+    //提现结束时间
+    private String cashEndTime;
+
+    //提现信息
+    private String cashInfo;
+
+    //提现状态 1失败 2成功
+    private Integer cashStatus;
+
+
+    public GBCashOrder() {
+    }
+
+    public GBCashOrder(String userCode, String cashAccount, String cashCode, Double cashMoney, Integer cashType, String cashDesc, String cashBeginTime, String cashEndTime, String cashInfo, Integer cashStatus) {
+        this.userCode = userCode;
+        this.cashAccount = cashAccount;
+        this.cashCode = cashCode;
+        this.cashMoney = cashMoney;
+        this.cashType = cashType;
+        this.cashDesc = cashDesc;
+        this.cashBeginTime = cashBeginTime;
+        this.cashEndTime = cashEndTime;
+        this.cashInfo = cashInfo;
+        this.cashStatus = cashStatus;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getCashAccount() {
+        return cashAccount;
+    }
+
+    public void setCashAccount(String cashAccount) {
+        this.cashAccount = cashAccount;
+    }
+
+    public String getCashCode() {
+        return cashCode;
+    }
+
+    public void setCashCode(String cashCode) {
+        this.cashCode = cashCode;
+    }
+
+    public Double getCashMoney() {
+        return cashMoney;
+    }
+
+    public void setCashMoney(Double cashMoney) {
+        this.cashMoney = cashMoney;
+    }
+
+    public Integer getCashType() {
+        return cashType;
+    }
+
+    public void setCashType(Integer cashType) {
+        this.cashType = cashType;
+    }
+
+    public String getCashDesc() {
+        return cashDesc;
+    }
+
+    public void setCashDesc(String cashDesc) {
+        this.cashDesc = cashDesc;
+    }
+
+    public String getCashBeginTime() {
+        return cashBeginTime;
+    }
+
+    public void setCashBeginTime(String cashBeginTime) {
+        this.cashBeginTime = cashBeginTime;
+    }
+
+    public String getCashEndTime() {
+        return cashEndTime;
+    }
+
+    public void setCashEndTime(String cashEndTime) {
+        this.cashEndTime = cashEndTime;
+    }
+
+    public String getCashInfo() {
+        return cashInfo;
+    }
+
+    public void setCashInfo(String cashInfo) {
+        this.cashInfo = cashInfo;
+    }
+
+    public Integer getCashStatus() {
+        return cashStatus;
+    }
+
+    public void setCashStatus(Integer cashStatus) {
+        this.cashStatus = cashStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "GBCashOrder{" +
+                "userCode='" + userCode + '\'' +
+                ", cashAccount='" + cashAccount + '\'' +
+                ", cashCode='" + cashCode + '\'' +
+                ", cashMoney=" + cashMoney +
+                ", cashType=" + cashType +
+                ", cashDesc='" + cashDesc + '\'' +
+                ", cashBeginTime='" + cashBeginTime + '\'' +
+                ", cashEndTime='" + cashEndTime + '\'' +
+                ", cashInfo='" + cashInfo + '\'' +
+                ", cashStatus=" + cashStatus +
+                '}';
+    }
+}
+

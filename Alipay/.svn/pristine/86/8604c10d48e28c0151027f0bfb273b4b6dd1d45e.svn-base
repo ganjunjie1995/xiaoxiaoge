@@ -1,0 +1,143 @@
+package com.alipay.login.entity;
+
+import java.util.Date;
+
+/**
+ * <dl>
+ * <dt>jingoUserFinance</dt>
+ * <dd>Description:类描述</dd>
+ * <dd>Copyright: 版权归杭州京歌科技有限公司所有</dd>
+ * <dd>Company: 杭州京歌科技有限公司</dd>
+ * <dd>CreateDate: 2017/8/18</dd>
+ * </dl>
+ *
+ * @author 小杰
+ */
+public class jingoUserFinance {
+    private int id;
+    private String userCode;
+    private int userScore;
+    private double userMoney;
+    private double userLockMoney;
+    private String userPayPwd;
+    private int userImNumber;
+    private int userPea;
+    private String userLoanDate;
+    private String userRepayDate;
+    private double residual;
+    private byte userOverdue;
+    private byte userBlacklist;
+    private int userLoanTimes;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public int getUserScore() {
+        return userScore;
+    }
+
+    public void setUserScore(int userScore) {
+        this.userScore = userScore;
+    }
+
+    public double getUserMoney() {
+        return userMoney;
+    }
+
+    public void setUserMoney(double userMoney) {
+        this.userMoney = userMoney;
+    }
+
+    public double getUserLockMoney() {
+        return userLockMoney;
+    }
+
+    public void setUserLockMoney(double userLockMoney) {
+        this.userLockMoney = userLockMoney;
+    }
+
+    public String getUserPayPwd() {
+        return userPayPwd;
+    }
+
+    public void setUserPayPwd(String userPayPwd) {
+        this.userPayPwd = userPayPwd;
+    }
+
+    public int getUserImNumber() {
+        return userImNumber;
+    }
+
+    public void setUserImNumber(int userImNumber) {
+        this.userImNumber = userImNumber;
+    }
+
+    public int getUserPea() {
+        return userPea;
+    }
+
+    public void setUserPea(int userPea) {
+        this.userPea = userPea;
+    }
+
+    public String getUserLoanDate() {
+        return userLoanDate;
+    }
+
+    public void setUserLoanDate(String userLoanDate) {
+        this.userLoanDate = userLoanDate;
+    }
+
+    public String getUserRepayDate() {
+        return userRepayDate;
+    }
+
+    public void setUserRepayDate(String userRepayDate) {
+        this.userRepayDate = userRepayDate;
+    }
+
+    public double getResidual() {
+        return residual;
+    }
+
+    public void setResidual(double residual) {
+        this.residual = residual;
+    }
+
+    public byte getUserOverdue() {
+        return userOverdue;
+    }
+
+    public void setUserOverdue(byte userOverdue) {
+        this.userOverdue = userOverdue;
+    }
+
+    public byte getUserBlacklist() {
+        return userBlacklist;
+    }
+
+    public void setUserBlacklist(byte userBlacklist) {
+        this.userBlacklist = userBlacklist;
+    }
+
+    public int getUserLoanTimes() {
+        return userLoanTimes;
+    }
+
+    public void setUserLoanTimes(int userLoanTimes) {
+        this.userLoanTimes = userLoanTimes;
+    }
+}

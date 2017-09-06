@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipay.login.mapper.loginMapper">
+    <!-- Result Map -->
+    <resultMap id="baseResultMap" type="com.alipay.login.entity.jingoUser">
+        <result column="id" property="id" />
+        <result column="user_code" property="userCode" />
+        <result column="user_name" property="userName" />
+        <result column="password" property="password" />
+        <result column="user_type" property="userType" />
+        <result column="user_phone" property="userPhone" />
+        <result column="alipay_code" property="alipayCode"/>
+    </resultMap>
+
+    <!-- table name -->
+    <sql id="table_name">
+        jingo_user
+    </sql>
+    <!-- property table all fields -->
+    <sql id="base_column_list">
+        id,user_code,user_name，password，user_type，user_phone，alipay_code
+    </sql>
+    <!--查询用户信息-->
+    <select id="findByName" resultMap="baseResultMap" parameterType="Object">
+        select id  from
+        <include refid="table_name" />
+        where user_name=${username}
+    </select>
+
+
+</mapper>

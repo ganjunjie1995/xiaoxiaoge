@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipay.login.mapper.LoginMapper">
+    <!-- Result Map -->
+    <resultMap id="baseResultMap" type="com.alipay.login.entity.JingoUser">
+        <result column="user_code" property="userCode" />
+        <result column="user_name" property="userName" />
+        <result column="pwd" property="pwd" />
+        <result column="vvid" property="vvid" />
+        <result column="user_phone" property="userPhone" />
+    </resultMap>
+
+    <!-- table name -->
+    <sql id="table_name">
+        jingo_user
+    </sql>
+    <!-- property table all fields -->
+    <sql id="base_column_list">
+        user_code,user_name,pwd,vvid,user_phone
+    </sql>
+    <!--查询用户信息-->
+    <select id="findByName" resultMap="baseResultMap">
+        select * from
+        <include refid="table_name" />
+        where user_name=#{username}
+    </select>
+
+    <!--查询用户数量-->
+    <select id="queryByCount" resultType="java.lang.Integer" parameterType="object">
+        select count(*) from
+        <include refid="table_name" />
+        where 1=1
+    </select>
+
+    <!--查询用户信息列表-->
+    <select id="queryByList" resultMap="baseResultMap" parameterType="object">
+        select * from
+        <include refid="table_name" />
+        where 1=1
+        order by id desc
+        ${pageQueryCondition}
+    </select>
+
+    <!-- 用户注册 -->
+    <insert id="register" parameterType="Object" >
+        insert into  <include refid="table_name" />
+        (<include refid="base_column_list" />)
+        values(#{ userCode},#{userName},#{pwd},#{vvid},#{userPhone})
+    </insert>
+
+</mapper>

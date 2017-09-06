@@ -1,0 +1,131 @@
+package com.alipay.Imazamox.domain;
+
+import java.util.Date;
+
+/**
+ * Created by zxj20 on 2017/8/17.
+ */
+public class JingoImRecharge {
+    private String  recharge_code;//'充值流水号'
+    private  String user_code;//'用户编号'
+    private  double recharge_money;//0.00' COMMENT ''充值金额''
+    private  String  recharge_subject;//'充值标题'
+    private  byte recharge_type;//'充值类型 : 1支付宝转余额 2支付宝转金豆 3金豆转余额''
+    private Date recharge_begin_time;//'充值创建时间'
+    private  Date recharge_end_time;//'0' COMMENT ''充值结束时间'
+    private  String  recharge_desc;//'充值描述'
+    private String recharge_info;//'充值信息'
+    private byte recharge_status;//'充值状态 1未完成 2完成'
+
+    public JingoImRecharge() {
+    }
+
+    public JingoImRecharge(String recharge_code, String user_code, double recharge_money, String recharge_subject, byte recharge_type, Date recharge_begin_time, Date recharge_end_time, String recharge_desc, String recharge_info, byte recharge_status) {
+        this.recharge_code = recharge_code;
+        this.user_code = user_code;
+        this.recharge_money = recharge_money;
+        this.recharge_subject = recharge_subject;
+        this.recharge_type = recharge_type;
+        this.recharge_begin_time = recharge_begin_time;
+        this.recharge_end_time = recharge_end_time;
+        this.recharge_desc = recharge_desc;
+        this.recharge_info = recharge_info;
+        this.recharge_status = recharge_status;
+    }
+
+    public String getRecharge_code() {
+        return recharge_code;
+    }
+
+    public void setRecharge_code(String recharge_code) {
+        this.recharge_code = recharge_code;
+    }
+
+    public String getUser_code() {
+        return user_code;
+    }
+
+    public void setUser_code(String user_code) {
+        this.user_code = user_code;
+    }
+
+    public double getRecharge_money() {
+        return recharge_money;
+    }
+
+    public void setRecharge_money(double recharge_money) {
+        this.recharge_money = recharge_money;
+    }
+
+    public String getRecharge_subject(String subject) {
+        return recharge_subject;
+    }
+
+    public void setRecharge_subject(String recharge_subject) {
+        this.recharge_subject = recharge_subject;
+    }
+
+    public byte getRecharge_type() {
+        return recharge_type;
+    }
+
+    public void setRecharge_type(byte recharge_type) {
+        this.recharge_type = recharge_type;
+    }
+
+    public Date getRecharge_begin_time(String currentDate) {
+        return recharge_begin_time;
+    }
+
+    public void setRecharge_begin_time(Date recharge_begin_time) {
+        this.recharge_begin_time = recharge_begin_time;
+    }
+
+    public Date getRecharge_end_time() {
+        return recharge_end_time;
+    }
+
+    public void setRecharge_end_time(Date recharge_end_time) {
+        this.recharge_end_time = recharge_end_time;
+    }
+
+    public String getRecharge_desc() {
+        return recharge_desc;
+    }
+
+    public void setRecharge_desc(String recharge_desc) {
+        this.recharge_desc = recharge_desc;
+    }
+
+    public String getRecharge_info() {
+        return recharge_info;
+    }
+
+    public void setRecharge_info(String recharge_info) {
+        this.recharge_info = recharge_info;
+    }
+
+    public byte getRecharge_status() {
+        return recharge_status;
+    }
+
+    public void setRecharge_status(byte recharge_status) {
+        this.recharge_status = recharge_status;
+    }
+
+    @Override
+    public String toString() {
+        return "JingoImRecharge{" +
+                "recharge_code='" + recharge_code + '\'' +
+                ", user_code='" + user_code + '\'' +
+                ", recharge_money=" + recharge_money +
+                ", recharge_subject='" + recharge_subject + '\'' +
+                ", recharge_type=" + recharge_type +
+                ", recharge_begin_time=" + recharge_begin_time +
+                ", recharge_end_time=" + recharge_end_time +
+                ", recharge_desc='" + recharge_desc + '\'' +
+                ", recharge_info='" + recharge_info + '\'' +
+                ", recharge_status=" + recharge_status +
+                '}';
+    }
+}

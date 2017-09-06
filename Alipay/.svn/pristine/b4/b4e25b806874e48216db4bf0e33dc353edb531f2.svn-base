@@ -1,0 +1,353 @@
+package com.alipay.purse.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.alipay.login.entity.*;
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.service.LoginService;
+import com.alipay.login.entity.*;
+import com.alipay.purse.domain.*;
+import com.alipay.purse.mapper.PurseMapper;
+import com.alipay.purse.service.PurseServiceI;
+import com.alipay.utils.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by zhongchunyan on 2017/8/17.
+ * 钱袋子Controller
+ * @Date 2017/8/17 15:23
+ */
+@Controller
+@RequestMapping(value = "/pureController")
+public class PurseController {
+    @Autowired
+    private PurseServiceI pureService;
+    @Autowired
+    private LoginService loginService;
+    @Autowired
+    private PurseMapper purseMapper;
+
+    private AlipayClient client = ContentUtil.getClient();
+    private Logger log = Logger.getLogger(getClass());
+
+    /**
+     * @Author: 小杰
+     * @Description: 查询钱袋记录
+     * @Date: 16:50
+     * @Params:
+     * @Return:
+     */
+    @RequestMapping(value = "purse.do", method = RequestMethod.GET)
+    public String queryPurse( Model model,String pageNo){
+        JingoUser user= (JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+
+        List<JingoPurse> listPuser=pureService.getPurse(user.getUserCode(),user.getUserPhone());
+        JingoRecharge jingoRecharge=new JingoRecharge();
+
+        int pageno=1;
+        if(pageNo!=""&&pageNo!=null){
+            pageno=Integer.parseInt(pageNo);
+        }
+        Pagination pagination=pureService.findPaging(jingoRecharge,pageno,10);
+        if(listPuser.size() <= 0){
+
+        }
+
+
+
+        model.addAttribute("purse", listPuser.get(0));
+        model.addAttribute("pagination", pagination);
+        int a=0;
+        return "purse/pbody";
+    }
+
+    /**
+     * 余额充值
+     * @param amount
+     * @return
+     */
+    @RequestMapping(value = "/recharge", method = RequestMethod.GET)
+    public void recharge(final double amount, HttpServletRequest request, HttpServletResponse response){
+        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        com.alipay.login.entity.JingoUser user = (com.alipay.login.entity.JingoUser)
+                request.getSession().getAttribute(Constant.LOGIN_USER);
+        String rechargeCode = "b" + GeneratorUUID.generate();
+        alipayRequest.setReturnUrl(ContentUtil.getReturnUrl() + Constant.RECHARGE_RETURN_URL +
+                "?rechargeCode=" + rechargeCode + "&amount=" + amount + "&userCode" + user.getUserCode());
+        alipayRequest.setNotifyUrl(ContentUtil.getNotifyUrl());
+        //构造Content
+        String productCode = "FAST_INSTANT_TRADE_PAY";
+        double totalAmount = amount;
+        String subject = "recharge money" + amount;
+        JSONObject json = new JSONObject();
+        json.put("out_trade_no", rechargeCode);
+        json.put("product_code", productCode);
+        json.put("total_amount", totalAmount);
+        json.put("subject",subject);
+        alipayRequest.setBizContent(json.toJSONString());
+        String form="";
+        try {
+            form = client.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
+            log.debug("recharge--->form" + form);
+            response.getWriter().write(form);//直接将完整的表单html输出到页面
+            //插入信息
+            pureService.saveRecharge(amount, rechargeCode, subject);
+            response.getWriter().flush();
+            response.getWriter().close();
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+            log.debug("recharge---> alipay出错");
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.debug("recharge--> 渲染页面出错");
+        }
+    }
+
+    /**
+    * @Author: zhongchunyan
+    * @Description: 扫码支付后更新充值信息
+    * @Date: 2017/8/18
+    * @Params: 
+    * @Return: 
+    */
+    @RequestMapping(value = "postRechargeInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> postRechargeInfo(final String rechargeCode,final double amount, final String userCode){
+        Map<String, Object> reMap = new HashMap<>();
+        JingoRecharge recharge = new JingoRecharge();
+        recharge.setRechargeCode(rechargeCode);
+        JingoPurse purse = new JingoPurse();
+        purse.setUserCode(userCode);
+        purse.setPureAvaliableBalance(amount);
+        pureService.updatePurse(purse,1);
+        return pureService.updateRecharge(recharge);
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 退款接口
+    * @Date: 2017/8/18
+    * @Params: 
+    * @Return: 
+    */
+    @RequestMapping(value = "postRefund", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> postRefund(final double amount){
+        Map<String, Object> reMap = new HashMap<>();
+        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+        String  outTradeNo= "402882935df3f147015df3f147660000";
+        String refundReason = "正常退款";
+        JSONObject json = new JSONObject();
+        json.put("out_trade_no", outTradeNo);
+        json.put("refund_amount", amount);
+        json.put("refund_reason", refundReason);
+        request.setBizContent(json.toJSONString());
+        AlipayTradeRefundResponse response = null;
+        try {
+            response = client.execute(request);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        if(response.isSuccess()){
+           reMap.put("errcode", 0);
+           reMap.put("errmsg" , "成功退款" + amount + "元");
+        } else {
+            reMap.put("errcode", -1);
+            reMap.put("errmsg" , "退款失败");
+        }
+        return reMap;
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 账户提现
+    * @Date: 2017/8/18
+    * @Params: 
+    * @Return: 
+    */
+    @RequestMapping(value = "/postTransfer", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String , Object> postTransfer(final double amount, final String userPhone) {
+        //判断用户余额是否足够提现
+        Map<String, Object> reMap = PurseIsEnough.judgePurse(amount);
+        if(!reMap.containsKey("userPurse")) return reMap;
+        JingoPurse purse = (JingoPurse) reMap.get("userPurse");
+        purse.setPureAvaliableBalance(amount);
+
+        AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+        String transferCode = "a" + GeneratorUUID.generate();
+        String payType = "ALIPAY_LOGONID";
+        String payAccount = userPhone;
+        JSONObject json = new JSONObject();
+        json.put("out_biz_no", transferCode);
+        json.put("payee_type", payType);
+        json.put("payee_account", payAccount);
+        json.put("amount", amount);
+
+        JingoCash cash = new JingoCash();
+        String currentTime = DateUtil.getCurrentDate(Constant.DATE_FORMAT);
+        cash.setCashMoney(amount);
+        cash.setCashAccount(payAccount);
+        cash.setCashBeginTime(currentTime);
+        cash.setCashEndTime(currentTime);
+        cash.setCashCode(transferCode);
+
+        com.alipay.login.entity.JingoUser user = (com.alipay.login.entity.JingoUser)
+                SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        cash.setUserCode(user.getUserCode());
+        cash.setCashType((byte) 1);
+        cash.setCashStatus((byte) 2);
+        request.setBizContent(json.toJSONString());
+        AlipayFundTransToaccountTransferResponse response = null;
+        try {
+            response = client.execute(request);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        if (response.isSuccess()) {
+            reMap = pureService.saveCash(cash);
+            pureService.updatePurse(purse,2);
+            reMap.put("errcode", 0);
+            reMap.put("errmsg", "账户：" + userPhone + "成功提现" + amount + "元");
+        } else {
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "提现失败");
+        }
+        return reMap;
+    }
+
+    /**
+    * @Author: zhongchunyan
+    * @Description: 付款
+    * @Date: 2017/8/21
+    * @Params:
+    * @Return:
+     *
+    */
+    @RequestMapping(value = "/transferToUser", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> transferToUser(String user, double money, String info){
+        Map<String, Object> reMap = null;
+        int flag = 2;
+        reMap = PurseIsEnough.isUserExist(null, user);
+        com.alipay.login.entity.JingoUser targetUser = ((com.alipay.login.entity.JingoUser)reMap.get("user"));
+        if(!reMap.containsKey("user")) return reMap;//用户不存在
+         reMap = PurseIsEnough.judgePurse(money);
+        if(!reMap.containsKey("userPurse")) return reMap;//余额不足
+        JingoPurse fromPurse = null;
+        fromPurse = (JingoPurse) reMap.get("userPurse");
+        fromPurse.setPureAvaliableBalance(fromPurse.getPureAvaliableBalance() - money);
+        List<JingoPurse> purses = pureService.getPurse(null,user);
+        JingoPurse targetPurse =null;
+        if(purses.size() <= 0){ //转账的用户可能还未对账户进行充值
+            targetPurse =  new JingoPurse();
+            flag = 1;
+            targetPurse.setPureCode("b" + GeneratorUUID.generate());
+            targetPurse.setUserCode(targetUser.getUserCode());
+            targetPurse.setPureAvaliableBalance(money);
+        }else{
+            targetPurse = purses.get(0);
+            targetPurse.setPureAvaliableBalance(targetPurse.getPureAvaliableBalance() + money);
+        }
+        JingoTransfer transfer = new JingoTransfer();
+        transfer.setTransCode("c" + GeneratorUUID.generate());
+        transfer.setReceiveAccount(targetPurse.getUserCode());
+        transfer.setUserCode(fromPurse.getUserCode());
+        transfer.setTransInfo(info);
+        transfer.setTransMoney(money);
+        return pureService.transferPurse(fromPurse,targetPurse,transfer, flag);
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 用户收款
+    * @Date: 2017/8/22
+    * @Params:
+    * @Return:
+    */
+    @RequestMapping(value = "/receiveFromUser", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> receiveFromUser(String user, double money, String info){
+        Map<String, Object> reMap = new HashMap<>();
+        reMap = PurseIsEnough.isUserExist(null,user);
+        if(!reMap.containsKey("user")) return reMap;
+        com.alipay.login.entity.JingoUser targetUser = (com.alipay.login.entity.JingoUser) reMap.get("user");
+        JingoMessage msg = new JingoMessage();
+        msg.setMessageCode(GeneratorUUID.generate());
+        com.alipay.login.entity.JingoUser currentUser = (com.alipay.login.entity.JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        msg.setMessageCreater(currentUser.getUserCode());
+        msg.setMessageCreateTime(DateUtil.getCurrentDate(Constant.DATE_FORMAT));
+        msg.setMessageReceiver(targetUser.getUserCode());
+        msg.setMessageStatus((byte)1);
+        msg.setMessageDesc(info);
+        msg.setMessageMoney(money);
+        return pureService.updateMessage(msg);
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 读取用户未读信息
+    * @Date: 2017/8/23
+    * @Params:
+    * @Return:
+    */
+    @RequestMapping(value = "/readTransferMail" , method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> readTransferMail(){
+        Map<String, Object> reMap = new HashMap<>();
+        com.alipay.login.entity.JingoUser user= (com.alipay.login.entity.JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+        List<JingoMessage> msgs = purseMapper.queryMessage(user.getUserCode());
+        if(msgs.size() <= 0){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg", "您没有未读信息!");
+        }else{
+            reMap.put("errcode", 0);
+            reMap.put("list", msgs);
+        }
+        return reMap;
+    }
+    /**
+    * @Author: zhongchunyan
+    * @Description: 删除所选中数据
+    * @Date: 2017/8/23
+    * @Params:
+    * @Return:
+    */
+    @RequestMapping(value = "/deleteSelection", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> deleteSelection(String code){
+        Map<String, Object> reMap = new HashMap<>();
+        if(StringUtils.isBlank(code)){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg","未选中需删除信息!");
+            return reMap;
+        }
+        int flag = ContentUtil.getDeleteFlag(code);
+        if(flag == 4){
+            reMap.put("errcode", -1);
+            reMap.put("errmsg","该信息无法被删除!");
+            return reMap;
+        }
+        reMap = pureService.deleteSelection(code, flag);
+        return reMap;
+    }
+}

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alipay.purse.mapper.PurseMapper">
+
+    <!-- 查询条件   -->
+    <sql id="query_where_clause">
+        where 1=1
+        <trim suffixOverrides=",">
+            <if test="userCode != null">
+                and user_code = #{userCode}
+            </if>
+            <if test="rechargeMoney != 0.0">
+                and recharge_money = #{rechargeMoney}
+            </if>
+            <if test="rechargeSubject != null">
+                and recharge_subject = #{rechargeSubject}
+            </if>
+            <if test='rechargeType != null and rechargeType != ""'>
+                and recharge_type = #{rechargeType}
+            </if>
+            <if test='rechargeBeginTime != null and rechargeBeginTime != ""'>
+                and recharge_begin_time = #{rechargeBeginTime}
+            </if>
+            <if test="rechargeDesc != null">
+                and recharge_desc = #{rechargeDesc}
+            </if>
+            <if test="rechargeInfo != null">
+                and recharge_info = #{rechargeInfo}
+            </if>
+            <if test="rechargeStatus != 0">
+                and recharge_status = #{rechargeStatus}
+            </if>
+        </trim>
+    </sql>
+    <resultMap id="baseJingoMap" type="com.alipay.purse.domain.JingoRecharge">
+        <result column="recharge_code" property="rechargeCode" />
+        <result column="user_code" property="userCode" />
+        <result column="recharge_money" property="rechargeMoney" />
+        <result column="recharge_subject" property="rechargeSubject" />
+        <result column="recharge_type" property="rechargeType" />
+        <result column="recharge_begin_time" property="rechargeBeginTime" />
+        <result column="recharge_desc" property="rechargeDesc" />
+        <result column="recharge_info" property="rechargeInfo" />
+        <result column="recharge_status" property="rechargeStatus" />
+    </resultMap>
+
+    <resultMap id="baseViewMap" type="com.alipay.purse.domain.JingoViewQuery">
+        <result column="begin_time" property="beginTime" />
+        <result column="code" property="code" />
+        <result column="type" property="type" />
+        <result column="money" property="money" />
+        <result column="status" property="status" />
+    </resultMap>
+    <!--zhongchunyan  插入充值信息-->
+    <insert id="insertRecharge" parameterType="com.alipay.purse.domain.JingoRecharge">
+    <![CDATA[
+        insert into jingo_recharge
+        (recharge_code, user_code, recharge_money, recharge_subject, recharge_type,
+          recharge_begin_time, recharge_desc, recharge_info, recharge_status)
+        values(
+        #{rechargeCode}, #{userCode}, #{rechargeMoney}, #{rechargeSubject}, #{rechargeType},
+        #{rechargeBeginTime}, #{rechargeDesc}, #{rechargeInfo}, #{rechargeStatus}
+        )
+     ]]>
+    </insert>
+    <!--余额提现-->
+    <insert id="insertCash" parameterType="com.alipay.purse.domain.JingoCash">
+     <![CDATA[
+        insert into jingo_cash
+        (cash_code, user_code, cash_account, cash_money, cash_type, cash_desc,
+        cash_begin_time, cash_end_time, cash_info, cash_status)
+        VALUES
+        (#{cashCode}, #{userCode}, #{cashAccount}, #{cashMoney}, #{cashType}, #{cashDesc},
+        #{cashBeginTime}, #{cashEndTime}, #{cashInfo}, #{cashStatus})
+        ]]>
+    </insert>
+    <!--更新余额信息-->
+    <insert id="insertPurse" parameterType="com.alipay.purse.domain.JingoPurse">
+        <![CDATA[
+        insert into jingo_purse
+        (pure_code, user_code, pure_avalilable_balance, pure_locked_balance)
+        VALUES
+        (#{pureCode}, #{userCode}, #{pureAvaliableBalance}, #{pureLockedBalance})
+        ]]>
+    </insert>
+    <!--插入转账信息-->
+    <insert id="insertTransfer" parameterType="com.alipay.purse.domain.JingoTransfer">
+        insert into jingo_transfer
+        (trans_code, user_code, trans_money, trans_remark, receive_account,
+        trans_begin_time, trans_end_time, trans_info)
+        VALUES
+        (#{transCode}, #{userCode}, #{transMoney}, #{transRemark}, #{receiveAccount},
+        #{transBeginTime}, #{transEndTime},#{transInfo})
+    </insert>
+    <!--插入收款信息-->
+    <insert id="insertMessage" parameterType="com.alipay.purse.domain.JingoMessage">
+        insert into jingo_message
+        <include refid="msgSql" />
+        values(#{messageCode}, #{messageTitle}, #{messageDesc}, #{messageCreateTime}, #{messageReadTime}, #{messageCreater},
+         #{messageReceiver}, #{messageStatus}, #{messageMoney})
+    </insert>
+    <!--更新充值信息-->
+
+    <update id="updateRecharge" parameterType="com.alipay.purse.domain.JingoRecharge">
+        update jingo_recharge
+        <set>
+           <if test="rechargeEndTime != null">
+               recharge_end_time = #{rechargeEndTime},
+           </if>
+            <if test="rechargeStatus != 0">
+                recharge_status = #{rechargeStatus}
+            </if>
+        </set>
+        where recharge_code = #{rechargeCode}
+    </update>
+
+    <update id="updatePurse" parameterType="com.alipay.purse.domain.JingoPurse">
+        update jingo_purse
+        <set>
+            <if test = "pureAvaliableBalance != -1">
+                pure_avalilable_balance = #{pureAvaliableBalance},
+            </if>
+            <if test="pureLockedBalance != -1">
+                pure_locked_balance = #{pureLockedBalance}
+            </if>
+        </set>
+        where user_code = #{userCode}
+    </update>
+
+
+    <!--查询当前用户信息-->
+    <select id="queryUserPurse" resultMap="purseMap">
+        select pure_code, user_code, pure_avalilable_balance, pure_locked_balance
+        from jingo_purse
+        <where>
+            <if test="userCode != null">
+                and user_code = #{userCode}
+            </if>
+            <if test="userPhone != null">
+                and user_code =
+                (select user_code from jingo_user where
+                user_phone = #{userPhone})
+            </if>
+            and 1=1
+        </where>
+    </select>
+
+    <select id="queryUserInfo" resultMap="baseResultMap">
+        select user_code, user_name, pwd, vvid, user_phone
+        from jingo_user
+        <where>
+            <if test="userCode != null">
+                and user_code = #{userCode}
+            </if>
+            <if test="userPhone != null">
+                and user_phone = #{userPhone}
+            </if>
+            and 1 = 1
+        </where>
+    </select>
+    <!--查询用户数量-->
+    <select id="queryByCount" resultType="java.lang.Integer" parameterType="object">
+        select count(*) from
+        view_query_purse
+        where 1=1
+    </select>
+
+    <!--查询钱袋充值记录-->
+    <select id="queryByBillList" resultMap="baseViewMap" parameterType="object">
+        select * from
+        view_query_bill
+       where 1=1
+        order by begin_time desc
+        ${pageQueryCondition}
+    </select>
+
+    <!--查询用户数量-->
+    <select id="queryByBillCount" resultType="java.lang.Integer" parameterType="object">
+        select count(*) from
+        view_query_bill
+        where 1=1
+    </select>
+    <!--查询钱袋充值记录-->
+    <select id="queryByList" resultMap="baseViewMap" parameterType="object">
+        select * from
+        view_query_purse
+        where 1=1
+        order by begin_time desc
+        ${pageQueryCondition}
+    </select>
+
+    <!--查询用户需付款信息-->
+    <select id="queryMessage">
+        select
+        <include refid="msgSql" />
+        FROM jingo_message
+        where user_code = #{userCode}
+    </select>
+
+    <delete id="deleteSelection">
+        delete FROM
+        <if test="flag == 1">
+            jingo_cash
+        </if>
+        <if test="flag == 2">
+            jingo_recharge
+        </if>
+        <if test="flag == 3">
+            jingo_transfer
+        </if>
+        WHERE
+        <if test="flag == 1">
+            cash_code = #{code}
+        </if>
+        <if test="flag == 2">
+            recharge_code = #{code}
+        </if>
+        <if test="flag == 3">
+            trans_code = #{code}
+        </if>
+    </delete>
+
+    <!-- sql-->
+    <sql id="msgSql">
+          message_code, message_title, message_desc, message_create_time, message_read_time, message_creater,
+        message_receiver, message_status, message_money
+    </sql>
+    <!--ResultMap-->
+    <resultMap id="purseMap" type="com.alipay.purse.domain.JingoPurse">
+        <result column="user_code" property="userCode"/>
+        <result column="pure_code" property="pureCode"/>
+        <result column="pure_avalilable_balance" property="pureAvaliableBalance"/>
+        <result column="pure_locked_balance" property="pureLockedBalance"/>
+    </resultMap>
+    <!--用户信息-->
+    <resultMap id="baseResultMap" type="com.alipay.login.entity.JingoUser">
+        <result column="user_code" property="userCode" />
+        <result column="user_name" property="userName" />
+        <result column="pwd" property="pwd" />
+        <result column="vvid" property="vvid" />
+        <result column="user_phone" property="userPhone" />
+    </resultMap>
+    <!--收付款信息-->
+    <resultMap id="msgMap" type="com.alipay.purse.domain.JingoMessage">
+        <result column="message_code" property="messageCode" />
+        <result column="message_title" property="messageTitle"/>
+        <result column="message_desc" property="messageDesc"/>
+        <result column="message_create_time" property="messageCreateTime"/>
+        <result column="message_read_time" property="messageReadTime"/>
+        <result column="message_creater" property="messageCreater"/>
+        <result column="message_receiver" property="messageReceiver"/>
+        <result column="message_status" property="messageStatus"/>
+        <result column="message_money" property="messageMoney"/>
+    </resultMap>
+</mapper>

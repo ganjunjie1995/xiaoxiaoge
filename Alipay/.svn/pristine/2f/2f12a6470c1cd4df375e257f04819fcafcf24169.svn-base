@@ -1,0 +1,114 @@
+package com.alipay.goldbean.controller;
+
+import com.alipay.goldbean.service.GoldBeanService;
+import com.alipay.login.entity.JingoUser;
+import com.alipay.login.entity.Pagination;
+import com.alipay.purse.domain.JingoPurse;
+import com.alipay.purse.domain.JingoRecharge;
+import com.alipay.purse.service.PurseServiceI;
+import com.alipay.utils.Constant;
+import com.alipay.utils.SessionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.alipay.api.AlipayApiException;
+import com.alipay.goldbean.service.GoldBeanService;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Created by zhouhongcheng on 2017/8/19.
+ */
+@Controller
+@RequestMapping("/gb")
+public class GoldBeanController {
+
+    @Autowired
+    GoldBeanService goldBeanService;
+    @Autowired
+    PurseServiceI pureService;
+    @Autowired
+    private GoldBeanService gbService;
+    private Logger log = Logger.getLogger(getClass());
+    /**
+     * @Author: 小杰
+     * @Description: 查询金豆记录
+     * @Date: 16:50
+     * @Params:
+     * @Return:
+     */
+    @RequestMapping(value = "/gold", method = RequestMethod.GET)
+    public String queryGold(Model model, String pageNo){
+        JingoUser user= (JingoUser) SessionUtil.getSessionAttribute(Constant.LOGIN_USER);
+
+        List<JingoPurse> listPuser=pureService.getPurse(user.getUserCode(),user.getUserPhone());
+        JingoRecharge jingoRecharge=new JingoRecharge();
+
+        int pageno=1;
+        if(pageNo!=""&&pageNo!=null){
+            pageno=Integer.parseInt(pageNo);
+        }
+        Pagination pagination=goldBeanService.findPaging(jingoRecharge,pageno,10);
+        if(listPuser.size() <= 0){
+
+        }
+
+
+
+        model.addAttribute("purse", listPuser.get(0));
+        model.addAttribute("pagination", pagination);
+        int a=0;
+        return "goldbean/gbody";
+    }
+
+
+    @RequestMapping("/showRecharge")
+    public String showRecharge(){
+        return "/recharge/rebean";
+    }
+
+    @RequestMapping("/recharge")
+    public void recharge(HttpServletRequest requ, HttpServletResponse resp){
+        String rechargeNumber=requ.getParameter("rechargeNumber");
+        try {
+            try {
+                gbService.alipay(resp,Double.parseDouble(rechargeNumber));
+            } catch (AlipayApiException e) {
+                e.printStackTrace();
+                log.debug("支付宝出错");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/showCash")
+    public String showCash(HttpServletRequest request){
+//        ModelAndView mv=new ModelAndView();
+//        System.out.println(mv.getModel().get("id"));
+        String userCode="402882a35df334f4015df334f45b0000";
+        request.setAttribute("userCode",userCode);
+//        mv.addObject(userCode);
+//        mv.setViewName("/recharge/cashbean");
+        return "/recharge/cashbean";
+    }
+
+    @RequestMapping("/cash")
+    public void cash(HttpServletRequest requ,HttpServletResponse resp){
+        String cashNumber=requ.getParameter("cashNumber");
+        System.out.println(cashNumber);
+        String userCode="402882a35df334f4015df334f45b0000";
+        gbService.gbCash(userCode,Double.parseDouble(cashNumber));
+    }
+
+
+}

@@ -1,0 +1,152 @@
+package com.alipay.goldbean.domain;
+
+import java.io.Serializable;
+
+/**
+ * 金豆充值记录表
+ * Created by zhouhongcheng on 2017/8/18.
+ */
+public class GBRechargeOrder implements Serializable {
+
+    //用户编号(外键)
+    private String userCode;
+
+    //充值流水号
+    private String rechargeCode;
+
+    //充值金额
+    private Double rechargeMoney;
+
+    //充值标题
+    private String rechargeSubject;
+
+    //充值类型 : 1支付宝转余额 2支付宝转金豆 3金豆转余额
+    private Integer rechargeType;
+
+    //充值创建时间
+    private String rechargeBeginTime;
+
+    //充值结束时间
+    private String rechargeEndTime;
+
+    //充值描述
+    private String rechargeDesc;
+
+    //充值信息
+    private String rechargeInfo;
+
+    //充值状态 1未完成 2完成
+    private Integer rechargeStatus;
+
+    public GBRechargeOrder() {
+    }
+
+    public GBRechargeOrder(String userCode, String rechargeCode, Double rechargeMoney, String rechargeSubject, Integer rechargeType, String rechargeBeginTime, String rechargeEndTime, String rechargeDesc, String rechargeInfo, Integer rechargeStatus) {
+        this.userCode = userCode;
+        this.rechargeCode = rechargeCode;
+        this.rechargeMoney = rechargeMoney;
+        this.rechargeSubject = rechargeSubject;
+        this.rechargeType = rechargeType;
+        this.rechargeBeginTime = rechargeBeginTime;
+        this.rechargeEndTime = rechargeEndTime;
+        this.rechargeDesc = rechargeDesc;
+        this.rechargeInfo = rechargeInfo;
+        this.rechargeStatus = rechargeStatus;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getRechargeCode() {
+        return rechargeCode;
+    }
+
+    public void setRechargeCode(String rechargeCode) {
+        this.rechargeCode = rechargeCode;
+    }
+
+    public Double getRechargeMoney() {
+        return rechargeMoney;
+    }
+
+    public void setRechargeMoney(Double rechargeMoney) {
+        this.rechargeMoney = rechargeMoney;
+    }
+
+    public String getRechargeSubject() {
+        return rechargeSubject;
+    }
+
+    public void setRechargeSubject(String rechargeSubject) {
+        this.rechargeSubject = rechargeSubject;
+    }
+
+    public Integer getRechargeType() {
+        return rechargeType;
+    }
+
+    public void setRechargeType(Integer rechargeType) {
+        this.rechargeType = rechargeType;
+    }
+
+    public String getRechargeBeginTime() {
+        return rechargeBeginTime;
+    }
+
+    public void setRechargeBeginTime(String rechargeBeginTime) {
+        this.rechargeBeginTime = rechargeBeginTime;
+    }
+
+    public String getRechargeEndTime() {
+        return rechargeEndTime;
+    }
+
+    public void setRechargeEndTime(String rechargeEndTime) {
+        this.rechargeEndTime = rechargeEndTime;
+    }
+
+    public String getRechargeDesc() {
+        return rechargeDesc;
+    }
+
+    public void setRechargeDesc(String rechargeDesc) {
+        this.rechargeDesc = rechargeDesc;
+    }
+
+    public String getRechargeInfo() {
+        return rechargeInfo;
+    }
+
+    public void setRechargeInfo(String rechargeInfo) {
+        this.rechargeInfo = rechargeInfo;
+    }
+
+    public Integer getRechargeStatus() {
+        return rechargeStatus;
+    }
+
+    public void setRechargeStatus(Integer rechargeStatus) {
+        this.rechargeStatus = rechargeStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "GBRechargeOrder{" +
+                "userCode='" + userCode + '\'' +
+                ", rechargeCode='" + rechargeCode + '\'' +
+                ", rechargeMoney=" + rechargeMoney +
+                ", rechargeSubject='" + rechargeSubject + '\'' +
+                ", rechargeType=" + rechargeType +
+                ", rechargeBeginTime='" + rechargeBeginTime + '\'' +
+                ", rechargeEndTime='" + rechargeEndTime + '\'' +
+                ", rechargeDesc='" + rechargeDesc + '\'' +
+                ", rechargeInfo='" + rechargeInfo + '\'' +
+                ", rechargeStatus=" + rechargeStatus +
+                '}';
+    }
+}
